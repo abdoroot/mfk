@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 
 class SubCategory extends BaseModel implements HasMedia
 {
-    use HasFactory, InteractsWithMedia,SoftDeletes;
+    use HasFactory, InteractsWithMedia,SoftDeletes,HasTranslations;
     protected $table = 'sub_categories';
     public $translatable = ['name','description'];
     protected $fillable = [

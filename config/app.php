@@ -85,6 +85,8 @@ return [
 
     'locale' => env('DEFAULT_LANGUAGE','en'),
 
+    'supported_languages' => ['ar', 'en'],
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale

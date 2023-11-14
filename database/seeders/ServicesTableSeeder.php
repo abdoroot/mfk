@@ -5629,8 +5629,8 @@ class ServicesTableSeeder extends Seeder
             unset($serviceData['description']);
         
             //set new translated fields
-            $serviceData['name'] = ['ar' => '', 'en' => $enName];
-            $serviceData['description'] = ['ar' => '', 'en' => $enDesc];
+            $serviceData['name'] = ['ar' => 'عربي', 'en' => $enName];
+            $serviceData['description'] = ['ar' => 'عربي', 'en' => $enDesc];
             $service = Service::create($serviceData);
             if (isset($featureImage)) {
                 $this->attachFeatureImage($service, $featureImage);

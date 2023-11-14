@@ -10,7 +10,7 @@ use Spatie\Translatable\HasTranslations;
 
 class ServicePackage extends Model implements  HasMedia
 {
-    use InteractsWithMedia,HasFactory;
+    use InteractsWithMedia,HasFactory,HasTranslations;
     protected $table = 'service_packages';
 
     public $translatable = ['name', 'description'];
