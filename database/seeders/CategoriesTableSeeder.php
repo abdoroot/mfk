@@ -271,6 +271,24 @@ class CategoriesTableSeeder extends Seeder
             ],
             [
                 'color' => '#000000',
+                'created_at' => '2023-09-04 13:02:07',
+                'deleted_at' => NULL,
+                'description' => [
+                    'en' => 'The Cooking category offers a delightful exploration of culinary techniques, recipes, and kitchen tips, catering to both novice cooks and seasoned chefs. 🫕🍲',
+                    'ar' => 'تقدم فئة الطهي استكشافًا ممتعًا لتقنيات الطهي والوصفات ونصائح المطبخ، مما يلبي احتياجات الطهاة المبتدئين والمطهوين المحترفين على حد سواء. 🫕🍲',
+                ],
+                'id' => 23,
+                'is_featured' => 1,
+                'name' => [
+                    'en' => 'Cooking 2',
+                    'ar' => ' 2الطهي',
+                ],
+                'status' => 1,
+                'category_image' => public_path('/images/category-images/cooking.png'),
+                'updated_at' => '2023-09-04 13:02:10',
+            ],
+            [
+                'color' => '#000000',
                 'created_at' => '2023-09-04 13:03:21',
                 'deleted_at' => NULL,
                 'description' => [

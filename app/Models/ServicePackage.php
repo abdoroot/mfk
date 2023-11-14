@@ -19,6 +19,8 @@ class ServicePackage extends Model implements  HasMedia
         'name', 'description', 'provider_id', 'status' , 'price','start_at','end_at','is_featured','category_id','subcategory_id','package_type'
     ];
     protected $casts = [
+        'name'    => 'array',
+        'description'    => 'array',
         'provider_id'    => 'integer',
         'status'    => 'integer',
         'price'  => 'double',

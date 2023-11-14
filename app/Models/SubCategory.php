@@ -7,16 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
 
 class SubCategory extends BaseModel implements HasMedia
 {
     use HasFactory, InteractsWithMedia,SoftDeletes;
     protected $table = 'sub_categories';
+    public $translatable = ['name','description'];
     protected $fillable = [
         'name', 'description', 'is_featured', 'status' , 'category_id'
     ];
 
     protected $casts = [
+        'name'    => 'array',
+        'description'    => 'array',
         'status'    => 'integer',
         'is_featured'  => 'integer',
         'category_id'  => 'integer',

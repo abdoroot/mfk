@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use App\Models\Service;
+use App\Models\Category;
 use App\Models\ProviderServiceAddressMapping;
 
 class ServicesTableSeeder extends Seeder
@@ -5604,23 +5605,40 @@ class ServicesTableSeeder extends Seeder
         
         foreach ($data as $key => $val) {
             $featureImage = $val['service_attachment'] ?? null;
-            $serviceData = Arr::except($val, ['provider_address_mapping','service_attachment']);
-            $enName = $serviceData['name'];
-            $enDesc = $serviceData['description'];
+            $serviceData = Arr::except($val, ['provider_address_mapping', 'service_attachment']);
+            // Check if 'category_id' exists before creating Service
+            if (!isset($serviceData['category_id'])) {
+               echo "category_id is missing in the provided data for Service creation.\n";
+                continue; // Skip this iteration and move to the next one
+            }
+
+            $categoryId = $serviceData['category_id'];
+        
+            // Check if the category_id exists in the categories table
+            if (!Category::where('id', $categoryId)->exists()) {
+               echo "Category with ID $categoryId does not exist.\n";
+                continue; // Skip this iteration and move to the next one
+            }
+        
+            // Check if 'name', 'description', and 'service_attachment' keys exist before accessing them
+            $enName = isset($serviceData['name']) ? $serviceData['name'] : '';
+            $enDesc = isset($serviceData['description']) ? $serviceData['description'] : '';
+        
             //unset
             unset($serviceData['name']);
             unset($serviceData['description']);
-            //set new tranlated fields
+        
+            //set new translated fields
             $serviceData['name'] = ['ar' => '', 'en' => $enName];
             $serviceData['description'] = ['ar' => '', 'en' => $enDesc];
             $service = Service::create($serviceData);
             if (isset($featureImage)) {
                 $this->attachFeatureImage($service, $featureImage);
             }
-            
+        
             if (isset($val['provider_address_mapping'])) {
                 $addresses = $val['provider_address_mapping'];
-                foreach($addresses as $addressData){
+                foreach ($addresses as $addressData) {
                     $address = new ProviderServiceAddressMapping($addressData);
                     $address->save();
                 }

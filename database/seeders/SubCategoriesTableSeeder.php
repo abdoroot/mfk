@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use App\Models\SubCategory;
+use App\Models\Category;
 
 class SubCategoriesTableSeeder extends Seeder
 {
@@ -611,12 +612,43 @@ class SubCategoriesTableSeeder extends Seeder
         foreach ($data as $key => $val) {
             $featureImage = $val['subcategory_image'] ?? null;
             $subCategoryData = Arr::except($val, ['subcategory_image']);
-            $sub_category = SubCategory::create($subCategoryData);
-            if (isset($featureImage)) {
-                $this->attachFeatureImage($sub_category, $featureImage);
+        
+            // Check if 'name' and 'description' keys exist before accessing them
+            $enName = isset($subCategoryData['name']) ? $subCategoryData['name'] : '';
+            $enDesc = isset($subCategoryData['description']) ? $subCategoryData['description'] : '';
+           
+            //unset 
+            unset($subCategoryData['name']);
+            unset($subCategoryData['description']);
+        
+            ///set 
+            $subCategoryData['name'] = ['en'=> $enName, 'ar' => ''];
+            $subCategoryData['description'] = ['en'=> $enDesc, 'ar' => ''];
+        
+            // Check if 'category_id' exists before creating SubCategory
+            if (isset($subCategoryData['category_id'])) {
+                $categoryId = $subCategoryData['category_id'];
+        
+                // Check if the category_id exists in the categories table
+                if (Category::where('id', $categoryId)->exists()) {
+                    $sub_category = SubCategory::create($subCategoryData);
+                    if (isset($featureImage)) {
+                        $this->attachFeatureImage($sub_category, $featureImage);
+                    }
+                } else {
+                    // Handle the case where the category_id doesn't exist in the categories table
+                    // You can log an error, skip insertion, or handle it according to your requirements
+                    // For example:
+                    echo "Category with ID $categoryId does not exist.\n";
+                }
+            } else {
+                // Handle the case where category_id is missing in $subCategoryData
+                // You may want to log an error or handle it as needed
+                // For example:
+                echo "category_id is missing in the provided data for SubCategory creation.\n";
             }
-         
         }
+        
     }
     private function attachFeatureImage($model, $publicPath)
     {

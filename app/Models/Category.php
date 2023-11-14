@@ -14,11 +14,13 @@ class Category extends BaseModel implements HasMedia
 {
     use HasFactory,HasRoles,InteractsWithMedia,SoftDeletes,HasTranslations;
     protected $table = 'categories';
-    public $translatable = ['name'];
+    public $translatable = ['name','description'];
     protected $fillable = [
         'name', 'description', 'is_featured', 'status' , 'color'
     ];
     protected $casts = [
+        'name'    => 'array',
+        'description'    => 'array',
         'status'    => 'integer',
         'is_featured'  => 'integer',
     ];
