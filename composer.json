@@ -20,6 +20,7 @@
         "orangehill/iseed": "^3.0",
         "spatie/laravel-medialibrary": "^9.6",
         "spatie/laravel-permission": "^4.0",
+        "spatie/laravel-translatable": "4.6",
         "stripe/stripe-php": "^10.12",
         "tightenco/ziggy": "^1.4",
         "toin0u/geocoder-laravel": "^4.6",

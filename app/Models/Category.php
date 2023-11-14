@@ -8,11 +8,13 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Translatable\HasTranslations;
 
 class Category extends BaseModel implements HasMedia 
 {
-    use HasFactory,HasRoles,InteractsWithMedia,SoftDeletes;
+    use HasFactory,HasRoles,InteractsWithMedia,SoftDeletes,HasTranslations;
     protected $table = 'categories';
+    public $translatable = ['name'];
     protected $fillable = [
         'name', 'description', 'is_featured', 'status' , 'color'
     ];

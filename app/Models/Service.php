@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
 
 class Service extends Model implements  HasMedia
 {
     use InteractsWithMedia,HasFactory,SoftDeletes;
     
     protected $table = 'services';
+
+    public $translatable = ['name', 'description'];
+
     protected $fillable = [
         'name', 'category_id', 'provider_id' , 'type' , 'is_slot','discount' , 'duration' ,'description', 
         'is_featured', 'status' , 'price' , 'added_by','subcategory_id','service_type','visit_type',
@@ -20,6 +24,7 @@ class Service extends Model implements  HasMedia
     ];
 
     protected $casts = [
+        'name'                   => 'array',
         'category_id'               => 'integer',
         'subcategory_id'               => 'integer',
         'provider_id'               => 'integer',
