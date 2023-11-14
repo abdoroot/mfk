@@ -16,7 +16,7 @@ class CreateCitiesTable extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('name', 255)->nullable()->default(null);
+            $table->json('name')->nullable()->default(null);
             $table->integer('state_id')->nullable()->default(null);
         });
     }

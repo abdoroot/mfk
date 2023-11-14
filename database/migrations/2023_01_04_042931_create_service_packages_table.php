@@ -18,8 +18,8 @@ class CreateServicePackagesTable extends Migration
             $table->unsignedBigInteger('provider_id');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->unsignedBigInteger('subcategory_id')->nullable();
-            $table->text('name')->nullable();
-            $table->text('description')->nullable();
+            $table->json('name')->nullable();
+            $table->json('description')->nullable();
             $table->double('price')->nullable();
             $table->dateTime('start_at')->nullable();
             $table->dateTime('end_at')->nullable();
