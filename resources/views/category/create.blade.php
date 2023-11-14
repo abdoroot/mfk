@@ -16,6 +16,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
+                        /////////edit language abdoroot
                         {{ Form::model($categorydata,['method' => 'POST','route'=>'category.store', 'enctype'=>'multipart/form-data', 'data-toggle'=>"validator" ,'id'=>'category'] ) }}
                         {{ Form::hidden('id') }}
                         <div class="row">
