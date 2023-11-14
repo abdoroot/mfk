@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Service extends Model implements  HasMedia
 {
-    use InteractsWithMedia,HasFactory,SoftDeletes;
+    use InteractsWithMedia,HasFactory,SoftDeletes,HasTranslations;
     
     protected $table = 'services';
 

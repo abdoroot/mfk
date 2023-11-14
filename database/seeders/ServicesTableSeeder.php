@@ -5416,29 +5416,6 @@ class ServicesTableSeeder extends Seeder
                 'type' => 'fixed',
                 'updated_at' => '2023-09-11 10:53:47',
             ],
-            // [
-            //     'added_by' => 49,
-            //     'advance_payment_amount' => NULL,
-            //     'category_id' => 22,
-            //     'created_at' => '2023-10-02 13:50:05',
-            //     'deleted_at' => '2023-10-02 13:52:30',
-            //     'description' => 'Experience the enchantment of delightful confections with our Macaron Magic Makers service. Our skilled artisans craft these sweet masterpieces, combining artistry and flavors to create moments of pure indulgence. ??',
-            //     'discount' => NULL,
-            //     'duration' => '0',
-            //     'id' => 113,
-            //     'is_enable_advance_payment' => 0,
-            //     'is_featured' => 0,
-            //     'is_slot' => 0,
-            //     'name' => 'Macaron Magic Makers',
-            //     'price' => 0.0,
-            //     'provider_id' => 49,
-            //     'service_type' => 'user_post_service',
-            //     'status' => 1,
-            //     'service_attachment' => public_path('/images/services/cooking/daily_meals_preparation_1.png'),
-            //     'subcategory_id' => NULL,
-            //     'type' => 'fixed',
-            //     'updated_at' => '2023-10-02 13:52:30',
-            // ],
             [
                 'added_by' => 49,
                 'advance_payment_amount' => NULL,
@@ -5600,29 +5577,6 @@ class ServicesTableSeeder extends Seeder
                 'type' => 'fixed',
                 'updated_at' => '2023-10-03 05:25:36',
             ],
-            // [
-            //     'added_by' => 3,
-            //     'advance_payment_amount' => NULL,
-            //     'category_id' => 25,
-            //     'created_at' => '2023-10-03 05:51:38',
-            //     'deleted_at' => '2023-10-03 05:52:19',
-            //     'description' => 'Get your electrical systems back in top shape with our Wire Repair service. Our skilled technicians ensure safe and efficient wire repairs, restoring functionality to your home or business. ???️',
-            //     'discount' => NULL,
-            //     'duration' => '0',
-            //     'id' => 121,
-            //     'is_enable_advance_payment' => 0,
-            //     'is_featured' => 0,
-            //     'is_slot' => 0,
-            //     'name' => 'Wire Repair',
-            //     'price' => 0.0,
-            //     'provider_id' => 3,
-            //     'service_type' => 'user_post_service',
-            //     'status' => 1,
-            //     'service_attachment' => public_path('/images/services/electrician/wiring_repair_1.png'),
-            //     'subcategory_id' => NULL,
-            //     'type' => 'fixed',
-            //     'updated_at' => '2023-10-03 05:52:19',
-            // ],
             [
                 'added_by' => 3,
                 'advance_payment_amount' => NULL,
@@ -5651,6 +5605,14 @@ class ServicesTableSeeder extends Seeder
         foreach ($data as $key => $val) {
             $featureImage = $val['service_attachment'] ?? null;
             $serviceData = Arr::except($val, ['provider_address_mapping','service_attachment']);
+            $enName = $serviceData['name'];
+            $enDesc = $serviceData['description'];
+            //unset
+            unset($serviceData['name']);
+            unset($serviceData['description']);
+            //set new tranlated fields
+            $serviceData['name'] = ['ar' => '', 'en' => $enName];
+            $serviceData['description'] = ['ar' => '', 'en' => $enDesc];
             $service = Service::create($serviceData);
             if (isset($featureImage)) {
                 $this->attachFeatureImage($service, $featureImage);

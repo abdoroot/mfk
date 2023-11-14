@@ -16,9 +16,11 @@ class UpdateCategoriesTableForTranslatableName extends Migration
         Schema::table('categories', function (Blueprint $table) {
             // Remove the existing 'name' column
             $table->dropColumn('name');
+            $table->dropColumn('description');
 
             // Add the translatable 'name' column
             $table->json('name')->nullable();
+            $table->json('description')->nullable();
         });
     }
 
@@ -32,6 +34,7 @@ class UpdateCategoriesTableForTranslatableName extends Migration
         Schema::table('categories', function (Blueprint $table) {
             // Reverse the changes made in the 'up' method
             $table->string('name', 100)->nullable()->after('id');
+            $table->string('description', 100)->nullable()->after('id');
         });
     }
 }

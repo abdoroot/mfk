@@ -142,6 +142,16 @@ class ServicePackagesTableSeeder extends Seeder
         foreach ($data as $key => $val) {
             $featureImage = $val['package_attachment'] ?? null;
             $servicePackageData = Arr::except($val, ['package_attachment']);
+
+            $enName = $servicePackageData['name'];
+            $enDesc = $servicePackageData['description'];
+            //unset
+            unset($servicePackageData['name']);
+            unset($servicePackageData['description']);
+            //set new tranlated fields
+            $servicePackageData['name'] = ['ar' => '', 'en' => $enName];
+            $servicePackageData['description'] = ['ar' => '', 'en' => $enDesc];
+
             $service_package = ServicePackage::create($servicePackageData);
             if (isset($featureImage)) {
                 $this->attachFeatureImage($service_package, $featureImage);

@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 
 class ServicePackage extends Model implements  HasMedia
 {
     use InteractsWithMedia,HasFactory;
     protected $table = 'service_packages';
+
+    public $translatable = ['name', 'description'];
+
     protected $fillable = [
         'name', 'description', 'provider_id', 'status' , 'price','start_at','end_at','is_featured','category_id','subcategory_id','package_type'
     ];
