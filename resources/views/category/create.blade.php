@@ -16,13 +16,19 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        /////////edit language abdoroot
+                        /////////todo edit language abdoroot
                         {{ Form::model($categorydata,['method' => 'POST','route'=>'category.store', 'enctype'=>'multipart/form-data', 'data-toggle'=>"validator" ,'id'=>'category'] ) }}
                         {{ Form::hidden('id') }}
                         <div class="row">
-                        <div class="form-group col-md-4">
-                                {{ Form::label('name', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
-                                {{ Form::text('name', old('name'), ['placeholder' => __('messages.name'), 'class' => 'form-control', 'required', 'title' => 'Please enter alphabetic characters and spaces only']) }}
+                            <div class="form-group col-md-4">
+                                {{ Form::label('name_ar', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::text('name[ar]', $categorydata->getTranslation('name', 'ar'), ['placeholder' => __('messages.name_in_arabic'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
+                                <small class="help-block with-errors text-danger"></small>
+                            </div>
+                            
+                            <div class="form-group col-md-4">
+                                {{ Form::label('name_en', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::text('name[en]', $categorydata->getTranslation('name', 'en'), ['placeholder' => __('messages.name_in_english'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                                 <small class="help-block with-errors text-danger"></small>
                             </div>
 
@@ -58,10 +64,18 @@
 
 
 
-                            <div class="form-group col-md-12">
-                                {{ Form::label('description',trans('messages.description'), ['class' => 'form-control-label']) }}
-                                {{ Form::textarea('description', null, ['class'=>"form-control textarea" , 'rows'=>3  , 'placeholder'=> __('messages.description') ]) }}
+                             <div class="form-group col-md-12">
+                                {{ Form::textarea('description[ar]', $categorydata->getTranslation('description', 'ar'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_arabic')]) }}
+                                <small class="help-block with-errors text-danger"></small>
                             </div>
+
+                            <div class="form-group col-md-12">
+                                {{ Form::label('description', trans('messages.description'), ['class' => 'form-control-label']) }}
+                                {{ Form::textarea('description[en]', $categorydata->getTranslation('description', 'en'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_english')]) }}
+                                <small class="help-block with-errors text-danger"></small>
+                            </div>
+                            
+                            
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">

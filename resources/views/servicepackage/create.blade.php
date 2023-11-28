@@ -20,8 +20,14 @@
                     {{ Form::hidden('id') }}
                     <div class="row">
                         <div class="form-group col-md-4">
-                            {{ Form::label('name',trans('messages.name').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
-                            {{ Form::text('name',old('name'),['placeholder' => trans('messages.name'),'class' =>'form-control','required']) }}
+                            {{ Form::label('name_ar', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                            {{ Form::text('name[ar]', null, ['placeholder' => __('messages.name_in_arabic'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
+                            <small class="help-block with-errors text-danger"></small>
+                        </div>
+                        
+                        <div class="form-group col-md-4">
+                            {{ Form::label('name_en', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                            {{ Form::text('name[en]',null, ['placeholder' => __('messages.name_in_english'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                             <small class="help-block with-errors text-danger"></small>
                         </div>
                         @if(auth()->user()->hasAnyRole(['admin','demo_admin']))
@@ -99,9 +105,16 @@
                             </div>
                         </div>
                         <div class="form-group col-md-12">
-                            {{ Form::label('description',trans('messages.description'), ['class' => 'form-control-label']) }}
-                            {{ Form::textarea('description', null, ['class'=>"form-control textarea" , 'rows'=>3  , 'placeholder'=> __('messages.description') ]) }}
+                            {{ Form::textarea('description[ar]', null, ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_arabic')]) }}
+                            <small class="help-block with-errors text-danger"></small>
                         </div>
+
+                        <div class="form-group col-md-12">
+                            {{ Form::label('description', trans('messages.description'), ['class' => 'form-control-label']) }}
+                            {{ Form::textarea('description[en]', null, ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_english')]) }}
+                            <small class="help-block with-errors text-danger"></small>
+                        </div>
+
                     </div>
                     <div class="row package_attachment_div">
                             <div class="col-md-12">

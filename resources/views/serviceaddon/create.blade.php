@@ -20,11 +20,23 @@
                 {{ Form::model($serviceaddon,['method' => 'POST','route'=>'serviceaddon.store', 'enctype'=>'multipart/form-data','data-toggle'=>"validator" ,'id'=>'serviceaddon'] ) }}
                         {{ Form::hidden('id') }}
                         <div class="row">
-                            <div class="form-group col-md-4">
+                            {{-- <div class="form-group col-md-4">
                                 {{ Form::label('name', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
                                 {{ Form::text('name', old('name'), ['placeholder' => __('messages.name'), 'class' => 'form-control', 'title' => 'Please enter alphabetic characters and spaces only']) }}
                                 <small class="help-block with-errors text-danger"></small>
+                            </div> --}}
+                            <div class="form-group col-md-4">
+                                {{ Form::label('name_ar', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::text('name[ar]', $serviceaddon->getTranslation('name', 'ar'), ['placeholder' => __('messages.name_in_arabic'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
+                                <small class="help-block with-errors text-danger"></small>
                             </div>
+                            
+                            <div class="form-group col-md-4">
+                                {{ Form::label('name_en', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::text('name[en]', $serviceaddon->getTranslation('name', 'en'), ['placeholder' => __('messages.name_in_english'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
+                                <small class="help-block with-errors text-danger"></small>
+                            </div>
+
 
                             <div class="form-group col-md-4">
                                 {{ Form::label('name', __('messages.select_name',[ 'select' => __('messages.service') ]).' <span class="text-danger">*</span>',['class'=>'form-control-label'],false) }}

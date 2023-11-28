@@ -7,25 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
 
-class ServiceAddon extends Model implements  HasMedia
+class ServiceAddon extends Model implements HasMedia
 {
-    use InteractsWithMedia,HasFactory,SoftDeletes;
+    use InteractsWithMedia, HasFactory, SoftDeletes, HasTranslations;
+    public $translatable = ['name'];
     protected $table = 'service_addons';
     protected $fillable = [
-        'name', 'service_id','price','status'
+        'name',
+        'service_id',
+        'price',
+        'status'
     ];
     protected $casts = [
-        'service_id'    => 'integer',
-        'price'         => 'double',
-        'status'        => 'integer',
+        'service_id' => 'integer',
+        'price' => 'double',
+        'status' => 'integer',
     ];
-    public function service(){
-        return $this->belongsTo(Service::class,'service_id', 'id');
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id', 'id');
     }
     public function scopeList($query)
     {
         return $query->orderBy('deleted_at', 'asc');
     }
-   
+
 }

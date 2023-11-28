@@ -43,37 +43,37 @@ class HomeController extends Controller
         if (request()->ajax()) {
             $start = (!empty($_GET["start"])) ? date('Y-m-d', strtotime($_GET["start"])) : ('');
             $end = (!empty($_GET["end"])) ? date('Y-m-d', strtotime($_GET["end"])) : ('');
-            $data =  Booking::myBooking()->where('status', 'pending')->whereDate('date', '>=', $start)->whereDate('date',   '<=', $end)->with('service')->get();
+            $data = Booking::myBooking()->where('status', 'pending')->whereDate('date', '>=', $start)->whereDate('date', '<=', $end)->with('service')->get();
             return response()->json($data);
         }
         $setting_data = Setting::select('value')->where('type', 'dashboard_setting')->where('key', 'dashboard_setting')->first();
-        $data['dashboard_setting']  =   !empty($setting_data) ? json_decode($setting_data->value) : [];
+        $data['dashboard_setting'] = !empty($setting_data) ? json_decode($setting_data->value) : [];
         $provider_setting_data = Setting::select('value')->where('type', 'provider_dashboard_setting')->where('key', 'provider_dashboard_setting')->first();
-        $data['provider_dashboard_setting']  =  !empty($provider_setting_data) ? json_decode($provider_setting_data->value) : [];
+        $data['provider_dashboard_setting'] = !empty($provider_setting_data) ? json_decode($provider_setting_data->value) : [];
         $handyman_setting_data = Setting::select('value')->where('type', 'handyman_dashboard_setting')->where('key', 'handyman_dashboard_setting')->first();
-        $data['handyman_dashboard_setting']  =   !empty($handyman_setting_data) ? json_decode($handyman_setting_data->value) : [];
+        $data['handyman_dashboard_setting'] = !empty($handyman_setting_data) ? json_decode($handyman_setting_data->value) : [];
 
         $data['dashboard'] = [
-            'count_total_booking'               => Booking::myBooking()->count(),
-            'count_total_service'               => Service::myService()->count(),
-            'count_total_provider'              => User::myUsers('get_provider')->count(),
-            'new_customer'                      => User::myUsers('get_customer')->orderBy('id', 'DESC')->take(5)->get(),
-            'new_provider'                      => User::myUsers('get_provider')->with('getServiceRating')->orderBy('id', 'DESC')->take(5)->get(),
-            'upcomming_booking'                 => Booking::myBooking()->with('customer')->where('status', 'pending')->orderBy('id', 'DESC')->take(5)->get(),
-            'top_services_list'                 => Booking::myBooking()->showServiceCount()->take(5)->get(),
-            'count_handyman_pending_booking'    => Booking::myBooking()->where('status', 'pending')->count(),
-            'count_handyman_complete_booking'   => Booking::myBooking()->where('status', 'completed')->count(),
-            'count_handyman_cancelled_booking'  => Booking::myBooking()->where('status', 'cancelled')->count()
+            'count_total_booking' => Booking::myBooking()->count(),
+            'count_total_service' => Service::myService()->count(),
+            'count_total_provider' => User::myUsers('get_provider')->count(),
+            'new_customer' => User::myUsers('get_customer')->orderBy('id', 'DESC')->take(5)->get(),
+            'new_provider' => User::myUsers('get_provider')->with('getServiceRating')->orderBy('id', 'DESC')->take(5)->get(),
+            'upcomming_booking' => Booking::myBooking()->with('customer')->where('status', 'pending')->orderBy('id', 'DESC')->take(5)->get(),
+            'top_services_list' => Booking::myBooking()->showServiceCount()->take(5)->get(),
+            'count_handyman_pending_booking' => Booking::myBooking()->where('status', 'pending')->count(),
+            'count_handyman_complete_booking' => Booking::myBooking()->where('status', 'completed')->count(),
+            'count_handyman_cancelled_booking' => Booking::myBooking()->where('status', 'cancelled')->count()
         ];
 
         $data['category_chart'] = [
-            'chartdata'     => Booking::myBooking()->showServiceCount()->take(4)->get()->pluck('count_pid'),
-            'chartlabel'    => Booking::myBooking()->showServiceCount()->take(4)->get()->pluck('service.category.name')
+            'chartdata' => Booking::myBooking()->showServiceCount()->take(4)->get()->pluck('count_pid'),
+            'chartlabel' => Booking::myBooking()->showServiceCount()->take(4)->get()->pluck('service.category.name')
         ];
 
-        $total_revenue  = Payment::where('payment_status', 'paid');
+        $total_revenue = Payment::where('payment_status', 'paid');
         if (auth()->user()->hasAnyRole(['admin', 'demo_admin'])) {
-            $data['revenueData']    =  adminEarning();
+            $data['revenueData'] = adminEarning();
         }
         if ($user->hasRole('provider')) {
             $revenuedata = ProviderPayout::selectRaw('sum(amount) as total , DATE_FORMAT(created_at , "%m") as month')
@@ -81,16 +81,16 @@ class HomeController extends Controller
                 ->whereYear('created_at', date('Y'))
                 ->groupBy('month');
             $revenuedata = $revenuedata->get()->toArray();
-            $data['revenueData']    =    [];
-            $data['revenuelableData']    =    [];
+            $data['revenueData'] = [];
+            $data['revenuelableData'] = [];
             for ($i = 1; $i <= 12; $i++) {
                 $revenueData = 0;
-             
+
                 foreach ($revenuedata as $revenue) {
-                    if ((int)$revenue['month'] == $i) {
-                        $data['revenueData'][] = (int)$revenue['total'];
+                    if ((int) $revenue['month'] == $i) {
+                        $data['revenueData'][] = (int) $revenue['total'];
                         $revenueData++;
-                       
+
                     }
                 }
                 if ($revenueData == 0) {
@@ -98,20 +98,20 @@ class HomeController extends Controller
                 }
             }
 
-            $data['currency_data']=currency_data();
+            $data['currency_data'] = currency_data();
         }
 
 
-        $data['total_revenue']  =    $total_revenue->sum('total_amount');
+        $data['total_revenue'] = $total_revenue->sum('total_amount');
         if ($user->hasRole('provider')) {
-            $total_revenue  = ProviderPayout::where('provider_id', $user->id)->sum('amount') ?? 0;
+            $total_revenue = ProviderPayout::where('provider_id', $user->id)->sum('amount') ?? 0;
 
-            $data['total_revenue']=getPriceFormat($total_revenue);
+            $data['total_revenue'] = getPriceFormat($total_revenue);
         }
         if ($user->hasRole('handyman')) {
-            $data['total_revenue']  = HandymanPayout::where('handyman_id', $user->id)->sum('amount') ?? 0;
+            $data['total_revenue'] = HandymanPayout::where('handyman_id', $user->id)->sum('amount') ?? 0;
 
-          
+
         }
 
         if (auth()->user()->hasAnyRole(['admin', 'demo_admin'])) {
@@ -170,8 +170,8 @@ class HomeController extends Controller
         if (demoUserPermission()) {
             $message = __('messages.demo_permission_denied');
             $response = [
-                'status'    => false,
-                'message'   => $message
+                'status' => false,
+                'message' => $message
             ];
 
             return comman_custom_response($response);
@@ -290,19 +290,19 @@ class HomeController extends Controller
                 break;
         }
         if ($request->has('is_featured') && $request->is_featured == 'is_featured') {
-            $message =  __('messages.added_form', ['form' => $message_form]);
+            $message = __('messages.added_form', ['form' => $message_form]);
             if ($request->status == 0) {
                 $message = __('messages.remove_form', ['form' => $message_form]);
             }
         }
         if ($request->has('is_required') && $request->is_required == 'is_required') {
-            $message =  __('messages.added_form', ['form' => $message_form]);
+            $message = __('messages.added_form', ['form' => $message_form]);
             if ($request->status == 0) {
                 $message = __('messages.remove_form', ['form' => $message_form]);
             }
         }
         if ($request->has('provider_is_verified') && $request->provider_is_verified == 'provider_is_verified') {
-            $message =  __('messages.added_form', ['form' => $message_form]);
+            $message = __('messages.added_form', ['form' => $message_form]);
             if ($request->status == 0) {
                 $message = __('messages.remove_form', ['form' => $message_form]);
             }
@@ -314,8 +314,8 @@ class HomeController extends Controller
     {
         $items = array();
         $value = $request->q;
-
         $auth_user = authSession();
+        $locale = app()->getLocale() == 'ar' ? 'ar' : 'en';
         switch ($request->type) {
             case 'permission':
                 $items = \App\Models\Permission::select('id', 'name as text')->whereNull('parent_id');
@@ -325,7 +325,7 @@ class HomeController extends Controller
                 $items = $items->get();
                 break;
             case 'category':
-                $items = \App\Models\Category::select('id', 'name as text')->where('status', 1);
+                $items = \App\Models\Category::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1);
 
                 if ($value != '') {
                     $items->where('name', 'LIKE', '%' . $value . '%');
@@ -334,7 +334,7 @@ class HomeController extends Controller
                 $items = $items->get();
                 break;
             case 'subcategory':
-                $items = \App\Models\SubCategory::select('id', 'name as text')->where('status', 1);
+                $items = \App\Models\SubCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1);
 
                 if ($value != '') {
                     $items->where('name', 'LIKE', '%' . $value . '%');
@@ -366,17 +366,17 @@ class HomeController extends Controller
                 $items = $items->get();
                 break;
 
-                case 'provider-user':
-                    $items = \App\Models\User::select('id', 'display_name as text')
-                        ->where('user_type', 'provider')->orWhere('user_type','user')
-                        ->where('status', 1);
-    
-                    if ($value != '') {
-                        $items->where('display_name', 'LIKE', $value . '%');
-                    }
-    
-                    $items = $items->get();
-                    break;
+            case 'provider-user':
+                $items = \App\Models\User::select('id', 'display_name as text')
+                    ->where('user_type', 'provider')->orWhere('user_type', 'user')
+                    ->where('status', 1);
+
+                if ($value != '') {
+                    $items->where('display_name', 'LIKE', $value . '%');
+                }
+
+                $items = $items->get();
+                break;
 
             case 'handyman':
                 $items = \App\Models\User::select('id', 'display_name as text')
@@ -415,17 +415,16 @@ class HomeController extends Controller
                 $items = $items->get();
                 break;
             case 'service-list':
-                    $items = \App\Models\Service::select('id', 'name as text')->where('status', 1)->where('service_type','service');
-    
-                    if ($value != '') {
-                        $items->where('name', 'LIKE', '%' . $value . '%');
-                    }
-                    if (isset($request->provider_id)) {
-                        $items->where('provider_id', $request->provider_id);
-                    }
-    
-                    $items = $items->get();
-                    break;
+                $items = \App\Models\Service::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1)->where('service_type', 'service');
+                if ($value != '') {
+                    $items->where('name', 'LIKE', '%' . $value . '%');
+                }
+                if (isset($request->provider_id)) {
+                    $items->where('provider_id', $request->provider_id);
+                }
+
+                $items = $items->get();
+                break;
             case 'providertype':
                 $items = \App\Models\ProviderType::select('id', 'name as text')
                     ->where('status', 1);
@@ -446,14 +445,14 @@ class HomeController extends Controller
                 $items = $items->get();
                 break;
 
-                case 'bank':
-                    $items = \App\Models\Bank::select('id', 'bank_name as text')->where('provider_id',$request->provider_id)->where('status',1);
-    
-                    if ($value != '') {
-                        $items->where('name', 'LIKE', $value . '%');
-                    }
-                    $items = $items->get();
-                    break;
+            case 'bank':
+                $items = \App\Models\Bank::select('id', 'bank_name as text')->where('provider_id', $request->provider_id)->where('status', 1);
+
+                if ($value != '') {
+                    $items->where('name', 'LIKE', $value . '%');
+                }
+                $items = $items->get();
+                break;
 
             case 'country':
                 $items = \App\Models\Country::select('id', 'name as text');
@@ -525,8 +524,8 @@ class HomeController extends Controller
                 $i = 0;
                 foreach ($items as $key => $row) {
                     $data[$i] = [
-                        'id'    => $key,
-                        'text'  => $row,
+                        'id' => $key,
+                        'text' => $row,
                     ];
                     $i++;
                 }
@@ -563,7 +562,7 @@ class HomeController extends Controller
                 break;
             case 'subcategory_list':
                 $category_id = !empty($request->category_id) ? $request->category_id : '';
-                $items = \App\Models\SubCategory::select('id', 'name as text')->where('category_id', $category_id)->where('status', 1);
+                $items = \App\Models\SubCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('category_id', $category_id)->where('status', 1);
                 $items = $items->get();
                 break;
             case 'service_package':
@@ -592,8 +591,8 @@ class HomeController extends Controller
         if (demoUserPermission()) {
             $message = __('messages.demo_permission_denied');
             $response = [
-                'status'    => false,
-                'message'   => $message
+                'status' => false,
+                'message' => $message
             ];
 
             return comman_custom_response($response);
@@ -666,11 +665,11 @@ class HomeController extends Controller
         }
 
         $response = [
-            'status'    => true,
-            'image'     => getSingleMedia($data, $type),
-            'id'        => $request->id,
-            'preview'   => $type . "_preview",
-            'message'   => $message
+            'status' => true,
+            'image' => getSingleMedia($data, $type),
+            'id' => $request->id,
+            'preview' => $type . "_preview",
+            'message' => $message
         ];
 
         return comman_custom_response($response);
@@ -686,7 +685,7 @@ class HomeController extends Controller
             $dir = 'rtl';
         }
 
-        session()->put('dir',  $dir);
+        session()->put('dir', $dir);
         return redirect()->back();
     }
 
@@ -708,11 +707,14 @@ class HomeController extends Controller
     {
         return view('auth.verify-email');
     }
-    function getAjaxServiceList(Request $request){
-        $items = \App\Models\Service::select('id', 'name as text')->where('status', 1)->where('type', 'fixed');
+    function getAjaxServiceList(Request $request)
+    {
+        $locale = app()->getLocale() == 'ar' ? 'ar' : 'en';
+        //$items = \App\Models\Service::select('id', 'name as text')->where('status', 1)->where('type', 'fixed');
+        $items = \App\Models\Service::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1)->where('type', 'fixed');
 
         $provider_id = !empty($request->provider_id) ? $request->provider_id : auth()->user()->id;
-        $items->where('provider_id', $provider_id );
+        $items->where('provider_id', $provider_id);
         if (isset($request->category_id)) {
             $items->where('category_id', $request->category_id);
         }

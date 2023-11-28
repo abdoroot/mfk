@@ -32,14 +32,14 @@ class CategoryController extends Controller
         $filter = [
             'status' => $request->status,
         ];
-        $pageTitle = trans('messages.list_form_title',['form' => trans('messages.category')] );
+        $pageTitle = trans('messages.list_form_title', ['form' => trans('messages.category')]);
         $auth_user = authSession();
         $assets = ['datatable'];
-        return view('category.index', compact('pageTitle','auth_user','assets','filter'));
+        return view('category.index', compact('pageTitle', 'auth_user', 'assets', 'filter'));
     }
 
 
-    public function index_data(DataTables $datatable,Request $request)
+    public function index_data(DataTables $datatable, Request $request)
     {
         $query = Category::query()->list();
         $filter = $request->filter;
@@ -54,41 +54,41 @@ class CategoryController extends Controller
         }
         return $datatable->eloquent($query)
             ->addColumn('check', function ($row) {
-                return '<input type="checkbox" class="form-check-input select-table-row"  id="datatable-row-'.$row->id.'"  name="datatable_ids[]" value="'.$row->id.'" data-type="category" onclick="dataTableRowCheck('.$row->id.',this)">';
+                return '<input type="checkbox" class="form-check-input select-table-row"  id="datatable-row-' . $row->id . '"  name="datatable_ids[]" value="' . $row->id . '" data-type="category" onclick="dataTableRowCheck(' . $row->id . ',this)">';
             })
 
-            ->editColumn('name', function($query){                
+            ->editColumn('name', function ($query) {
                 if (auth()->user()->can('category edit')) {
-                    $link = '<a class="btn-link btn-link-hover" href='.route('category.create', ['id' => $query->id]).'>'.$query->name.'</a>';
+                    $link = '<a class="btn-link btn-link-hover" href=' . route('category.create', ['id' => $query->id]) . '>' . $query->name . '</a>';
                 } else {
-                    $link = $query->name; 
+                    $link = $query->name;
                 }
                 return $link;
             })
-           
+
             ->addColumn('action', function ($data) {
                 return view('category.action', compact('data'))->render();
             })
-            ->editColumn('is_featured' , function ($query){
-                $disabled = $query->trashed() ? 'disabled': '';
+            ->editColumn('is_featured', function ($query) {
+                $disabled = $query->trashed() ? 'disabled' : '';
 
                 return '<div class="custom-control custom-switch custom-switch-text custom-switch-color custom-control-inline">
                     <div class="custom-switch-inner">
-                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_featured" data-name="is_featured" '.($query->is_featured ? "checked" : "").'  '.  $disabled.' value="'.$query->id.'" id="f'.$query->id.'" data-id="'.$query->id.'">
-                        <label class="custom-control-label" for="f'.$query->id.'" data-on-label="'.__("messages.yes").'" data-off-label="'.__("messages.no").'"></label>
+                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_featured" data-name="is_featured" ' . ($query->is_featured ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="f' . $query->id . '" data-id="' . $query->id . '">
+                        <label class="custom-control-label" for="f' . $query->id . '" data-on-label="' . __("messages.yes") . '" data-off-label="' . __("messages.no") . '"></label>
                     </div>
                 </div>';
             })
-            ->editColumn('status' , function ($query){
-                $disabled = $query->trashed() ? 'disabled': '';
+            ->editColumn('status', function ($query) {
+                $disabled = $query->trashed() ? 'disabled' : '';
                 return '<div class="custom-control custom-switch custom-switch-text custom-switch-color custom-control-inline">
                     <div class="custom-switch-inner">
-                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_status" data-name="status" '.($query->status ? "checked" : "").'  '.$disabled.' value="'.$query->id.'" id="'.$query->id.'" data-id="'.$query->id.'">
-                        <label class="custom-control-label" for="'.$query->id.'" data-on-label="" data-off-label=""></label>
+                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_status" data-name="status" ' . ($query->status ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="' . $query->id . '" data-id="' . $query->id . '">
+                        <label class="custom-control-label" for="' . $query->id . '" data-on-label="" data-off-label=""></label>
                     </div>
                 </div>';
             })
-            ->rawColumns(['action', 'status', 'check','is_featured','name'])
+            ->rawColumns(['action', 'status', 'check', 'is_featured', 'name'])
             ->toJson();
     }
 
@@ -103,7 +103,7 @@ class CategoryController extends Controller
 
         switch ($actionType) {
             case 'change-status':
-               
+
                 $branches = Category::whereIn('id', $ids)->update(['status' => $request->status]);
                 $message = 'Bulk Category Status Updated';
                 break;
@@ -117,19 +117,19 @@ class CategoryController extends Controller
                 Category::whereIn('id', $ids)->delete();
                 $message = 'Bulk Category Deleted';
                 break;
-            
+
             case 'restore':
                 Category::whereIn('id', $ids)->restore();
                 $message = 'Bulk Category Restored';
                 break;
-            
+
             case 'permanently-delete':
                 Category::whereIn('id', $ids)->forceDelete();
                 $message = 'Bulk Category Permanently Deleted';
                 break;
 
             default:
-                return response()->json(['status' => false,'is_featured' => false, 'message' => 'Action Invalid']);
+                return response()->json(['status' => false, 'is_featured' => false, 'message' => 'Action Invalid']);
                 break;
         }
 
@@ -149,14 +149,14 @@ class CategoryController extends Controller
 
         $categorydata = Category::find($id);
 
-        $pageTitle = trans('messages.update_form_title',['form'=>trans('messages.category')]);
-        
-        if($categorydata == null){
-            $pageTitle = trans('messages.add_button_form',['form' => trans('messages.category')]);
+        $pageTitle = trans('messages.update_form_title', ['form' => trans('messages.category')]);
+
+        if ($categorydata == null) {
+            $pageTitle = trans('messages.add_button_form', ['form' => trans('messages.category')]);
             $categorydata = new Category;
         }
-        
-        return view('category.create', compact('pageTitle' ,'categorydata' ,'auth_user' ));
+
+        return view('category.create', compact('pageTitle', 'categorydata', 'auth_user'));
     }
 
     /**
@@ -167,35 +167,45 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        if(demoUserPermission()){
-            return  redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
+        if (demoUserPermission()) {
+            return redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
         }
+
         $data = $request->all();
-       
-        $data['is_featured'] = 0;
-        if($request->has('is_featured')){
-			$data['is_featured'] = 1;
-		}
-        if(!$request->is('api/*')) {
-            if($request->id == null ){
-                if(!isset($data['category_image'])){
-                    return  redirect()->back()->withErrors(__('validation.required',['attribute' =>'attachments']));
-                }
+        $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
+
+        $category = Category::updateOrCreate(['id' => $data['id']], []);
+
+        // Store name and description translations
+        $category->setTranslation('name', 'ar', $request->name['ar'] ?? '');
+        $category->setTranslation('name', 'en', $request->name['en'] ?? '');
+
+        $category->setTranslation('description', 'ar', $request->description['ar'] ?? '');
+        $category->setTranslation('description', 'en', $request->description['en'] ?? '');
+
+        $category->save();
+
+        // Handle image upload
+        if (!$request->is('api/*')) {
+            if ($request->id == null && !isset($data['category_image'])) {
+                return redirect()->back()->withErrors(__('validation.required', ['attribute' => 'attachments']));
             }
         }
-        $result = Category::updateOrCreate(['id' => $data['id'] ],$data);
 
-        storeMediaFile($result,$request->category_image, 'category_image');
+        storeMediaFile($category, $request->category_image, 'category_image');
 
-        $message = trans('messages.update_form',['form' => trans('messages.category')]);
-        if($result->wasRecentlyCreated){
-            $message = trans('messages.save_form',['form' => trans('messages.category')]);
+        $message = trans('messages.update_form', ['form' => trans('messages.category')]);
+        if ($category->wasRecentlyCreated) {
+            $message = trans('messages.save_form', ['form' => trans('messages.category')]);
         }
-        if($request->is('api/*')) {
+
+        if ($request->is('api/*')) {
             return comman_message_response($message);
-		}
-        return redirect(route('category.index'))->withSuccess($message);        
+        }
+
+        return redirect(route('category.index'))->withSuccess($message);
     }
+
 
     /**
      * Display the specified resource.
@@ -239,41 +249,42 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        if(demoUserPermission()){
-            return  redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
+        if (demoUserPermission()) {
+            return redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
         }
         $category = Category::find($id);
 
-        $msg= __('messages.msg_fail_to_delete',['name' => __('messages.category')] );
-        
-        if($category!='') { 
+        $msg = __('messages.msg_fail_to_delete', ['name' => __('messages.category')]);
 
-            $service = Service::where('category_id',$id)->first();
-        
+        if ($category != '') {
+
+            $service = Service::where('category_id', $id)->first();
+
             $category->delete();
-            $msg= __('messages.msg_deleted',['name' => __('messages.category')] );
+            $msg = __('messages.msg_deleted', ['name' => __('messages.category')]);
         }
-        if(request()->is('api/*')) {
+        if (request()->is('api/*')) {
             return comman_message_response($msg);
-		}
-        return comman_custom_response(['message'=> $msg , 'status' => true]);
-    }   
-    public function action(Request $request){
+        }
+        return comman_custom_response(['message' => $msg, 'status' => true]);
+    }
+    public function action(Request $request)
+    {
         $id = $request->id;
-        $category  = Category::withTrashed()->where('id',$id)->first();
-        $msg = __('messages.t_found_entry',['name' => __('messages.category')] );
-        if($request->type == 'restore') {
+        $category = Category::withTrashed()->where('id', $id)->first();
+        $msg = __('messages.t_found_entry', ['name' => __('messages.category')]);
+        if ($request->type == 'restore') {
             $category->restore();
-            $msg = __('messages.msg_restored',['name' => __('messages.category')] );
+            $msg = __('messages.msg_restored', ['name' => __('messages.category')]);
         }
-        if($request->type === 'forcedelete'){
+        if ($request->type === 'forcedelete') {
             $category->forceDelete();
-            $msg = __('messages.msg_forcedelete',['name' => __('messages.category')] );
+            $msg = __('messages.msg_forcedelete', ['name' => __('messages.category')]);
         }
-        if(request()->is('api/*')){
+        if (request()->is('api/*')) {
             return comman_message_response($msg);
-		}
-        return comman_custom_response(['message'=> $msg , 'status' => true]);
+        }
+        return comman_custom_response(['message' => $msg, 'status' => true]);
     }
 
 
@@ -282,48 +293,48 @@ class CategoryController extends Controller
         $ids = $request->ids;
         $type = $request->datatype;
 
-        switch($type){
-            case 'category': 
+        switch ($type) {
+            case 'category':
                 $InTrash = Category::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'subcategory': 
+                break;
+            case 'subcategory':
                 $InTrash = SubCategory::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'service': 
+                break;
+            case 'service':
                 $InTrash = Service::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'servicepackage': 
+                break;
+            case 'servicepackage':
                 $InTrash = ServicePackage::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'booking': 
+                break;
+            case 'booking':
                 $InTrash = Booking::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'user': 
+                break;
+            case 'user':
                 $InTrash = User::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'providertype': 
+                break;
+            case 'providertype':
                 $InTrash = ProviderType::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'providerdocument': 
+                break;
+            case 'providerdocument':
                 $InTrash = ProviderDocument::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'coupon': 
+                break;
+            case 'coupon':
                 $InTrash = Coupon::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'slider': 
+                break;
+            case 'slider':
                 $InTrash = Slider::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'document': 
+                break;
+            case 'document':
                 $InTrash = Documents::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            case 'blog': 
+                break;
+            case 'blog':
                 $InTrash = Blog::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
-            break;
-            
+                break;
+
             default:
-            break;
+                break;
         }
-        
+
         if (count($InTrash) === count($ids)) {
             return response()->json(['all_in_trash' => true]);
         }
@@ -331,5 +342,5 @@ class CategoryController extends Controller
         return response()->json(['all_in_trash' => false]);
     }
 
-    
+
 }

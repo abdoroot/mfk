@@ -15,7 +15,7 @@ class CreateServiceAddonsTable extends Migration
     {
         Schema::create('service_addons', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->json('name')->nullable();
             $table->unsignedBigInteger('service_id');
             $table->double('price')->default('0');
             $table->integer('qty')->default('1');

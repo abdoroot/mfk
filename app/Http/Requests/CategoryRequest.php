@@ -25,8 +25,9 @@ class CategoryRequest extends FormRequest
     {
         $id = request()->id;
         return [
-            'name'              => 'required|unique:categories,name,'.$id,
-            'status'            => 'required',
+            // 'name'              => 'required|unique:categories,name,'.$id,
+            'name' => 'required|array',
+            'status' => 'required',
         ];
     }
 }

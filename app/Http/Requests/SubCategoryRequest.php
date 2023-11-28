@@ -24,11 +24,12 @@ class SubCategoryRequest extends FormRequest
     public function rules()
     {
         $id = request()->id;
-
+        info($this->all());
         return [
-            'name'              => 'required|unique:sub_categories,name,'.$id,
-            'status'            => 'required',
-            'category_id'       => 'required',
+            //'name'              => 'required|unique:sub_categories,name,'.$id,
+            'name' => 'required|array',
+            'status' => 'required',
+            'category_id' => 'required',
             // 'subcategory_image'    => 'mimetypes:image/jpeg,image/png,image/jpg,image/gif,image/svg',
         ];
     }
