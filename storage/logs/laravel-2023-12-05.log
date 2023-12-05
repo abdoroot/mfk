@@ -2511,3 +2511,67 @@ Did you mean one of these?
 #66 D:\\laravel_apps\\handyman\\server.php(21): require_once('D:\\\\laravel_apps...')
 #67 {main}
 "} 
+[2023-12-05 08:57:09] local.INFO: array (
+  '_token' => 'OQkzlzeh32CK3eD6lRULqJ1guIEYgQIV6u0SiggE',
+  'id' => NULL,
+  'name' => 
+  array (
+    'ar' => 'العربية',
+    'en' => 'aaaaaaa',
+  ),
+  'store_category_id' => '1',
+  'status' => '1',
+  'description' => 
+  array (
+    'ar' => 'عربييييييييييي',
+    'en' => 'ennnnnnnnn',
+  ),
+  'subcategory_image' => 
+  \Illuminate\Http\UploadedFile::__set_state(array(
+     'test' => false,
+     'originalName' => 'expediav2-3751476-174cd0-449992.jpg',
+     'mimeType' => 'image/jpeg',
+     'error' => 0,
+     'hashName' => NULL,
+  )),
+)  
+[2023-12-05 08:58:17] local.INFO: array (
+  '_token' => 'OQkzlzeh32CK3eD6lRULqJ1guIEYgQIV6u0SiggE',
+  'id' => NULL,
+  'name' => 
+  array (
+    'ar' => 'arabiccccccccccc',
+    'en' => 'englishhhhh',
+  ),
+  'store_category_id' => '1',
+  'status' => '1',
+  'description' => 
+  array (
+    'ar' => 'arabiccccccccccc',
+    'en' => 'englishhhhh',
+  ),
+)  
+[2023-12-05 08:58:42] local.INFO: array (
+  '_token' => 'OQkzlzeh32CK3eD6lRULqJ1guIEYgQIV6u0SiggE',
+  'id' => NULL,
+  'name' => 
+  array (
+    'ar' => 'arabiccccccccccc',
+    'en' => 'englishhhhh',
+  ),
+  'store_category_id' => '1',
+  'status' => '1',
+  'description' => 
+  array (
+    'ar' => 'arabiccccccccccc',
+    'en' => 'englishhhhh',
+  ),
+  'subcategory_image' => 
+  \Illuminate\Http\UploadedFile::__set_state(array(
+     'test' => false,
+     'originalName' => '2016_12_12_16_37_24_800.jpg',
+     'mimeType' => 'image/jpeg',
+     'error' => 0,
+     'hashName' => NULL,
+  )),
+)  

@@ -57,6 +57,10 @@ class StoreSubCategoryController extends Controller
                 return $link;
             })
 
+            ->editColumn('description', function ($query) {
+                return $query->description;
+            })
+
             ->editColumn('category_id', function ($query) {
                 return ($query->store_category_id != null && isset($query->category)) ? $query->category->name : '-';
             })

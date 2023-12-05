@@ -79,12 +79,13 @@
                                 @endif
                                 
                                 <div class="form-group col-md-12">
+                                    {{ Form::label('description', trans('messages.description_in_arabic'), ['class' => 'form-control-label']) }}
                                     {{ Form::textarea('description[ar]', $subcategory->getTranslation('description', 'ar'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_arabic')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>
     
                                 <div class="form-group col-md-12">
-                                    {{ Form::label('description', trans('messages.description'), ['class' => 'form-control-label']) }}
+                                    {{ Form::label('description', trans('messages.description_in_english'), ['class' => 'form-control-label']) }}
                                     {{ Form::textarea('description[en]', $subcategory->getTranslation('description', 'en'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_english')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>
