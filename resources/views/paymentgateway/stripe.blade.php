@@ -27,8 +27,13 @@
         <small class="help-block with-errors text-danger"></small>
     </div>
     <div class="form-group col-md-12">
-        {{ Form::label('title',trans('messages.gateway_name').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
-        {{ Form::text('title',old('title'),['id'=>'title','placeholder' => trans('messages.title'),'class' =>'form-control','required']) }}
+        {{ Form::label('title_arabic',trans('messages.name_in_arabic').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
+        {{ Form::text('title[ar]',$payment_data->getTranslation("title","ar"),['placeholder' => trans('messages.title'),'class' =>'form-control','required','id' => 'title_ar']) }}
+        <small class="help-block with-errors text-danger"></small>
+    </div>
+    <div class="form-group col-md-12">
+        {{ Form::label('title_english',trans('messages.name_in_english').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
+        {{ Form::text('title[en]',$payment_data->getTranslation("title","en"),['placeholder' => trans('messages.title'),'class' =>'form-control','required','id' => 'title_en']) }}
         <small class="help-block with-errors text-danger"></small>
     </div>
     <div class="form-group col-md-12">
@@ -87,7 +92,7 @@ function getConfig(type){
         },
         success:function(response){
             var obj = '';
-            var stripe_url=stripe_key=stripe_publickey=title = '';
+            var stripe_url=stripe_key=stripe_publickey=title_ar=title_en = '';
 
             if(response){
             
@@ -98,7 +103,8 @@ function getConfig(type){
                 }
 
                 if(response.data.title != ''){
-                    title = response.data.title
+                    title_ar = response.data.title.ar;
+                    title_en = response.data.title.en;
                 }
                 
                 if(obj !== null){
@@ -110,7 +116,8 @@ function getConfig(type){
                 $('#stripe_url').val(stripe_url)
                 $('#stripe_key').val(stripe_key)
                 $('#stripe_publickey').val(stripe_publickey)
-                $('#title').val(title)
+                $('#title_ar').val(title_ar)
+                $('#title_en').val(title_en)
             
             }
         },

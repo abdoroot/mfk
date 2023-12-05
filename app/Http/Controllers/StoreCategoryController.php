@@ -67,6 +67,10 @@ class StoreCategoryController extends Controller
                 return $link;
             })
 
+            ->editColumn('description', function ($query) {
+                return $query->description;
+            })
+
             ->addColumn('action', function ($data) {
                 return view('store.category.action', compact('data'))->render();
             })

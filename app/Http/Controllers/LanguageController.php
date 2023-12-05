@@ -13,6 +13,10 @@ class LanguageController extends Controller
 {
 
 
+
+
+
+    
     function getFile(Request $request){
         $requestLangData = $request->all();
         $filename = $requestLangData['file'];

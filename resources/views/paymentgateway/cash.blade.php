@@ -13,8 +13,13 @@
 </div>
 <div class="row" id='enable_cod_payment'>
     <div class="form-group col-md-12">
-        {{ Form::label('title',trans('messages.gateway_name').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
-        {{ Form::text('title',old('title'),['placeholder' => trans('messages.title'),'class' =>'form-control','required']) }}
+        {{ Form::label('title_arabic',trans('messages.name_in_arabic').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
+        {{ Form::text('title[ar]',$payment_data->getTranslation("title","ar"),['placeholder' => trans('messages.title'),'class' =>'form-control','required']) }}
+        <small class="help-block with-errors text-danger"></small>
+    </div>
+    <div class="form-group col-md-12">
+        {{ Form::label('title_english',trans('messages.name_in_english').' <span class="text-danger">*</span>',['class'=>'form-control-label'], false ) }}
+        {{ Form::text('title[en]',$payment_data->getTranslation("title","en"),['placeholder' => trans('messages.title'),'class' =>'form-control','required']) }}
         <small class="help-block with-errors text-danger"></small>
     </div>
 </div>

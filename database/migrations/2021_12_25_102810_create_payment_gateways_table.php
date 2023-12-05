@@ -15,7 +15,7 @@ class CreatePaymentGatewaysTable extends Migration
     {
         Schema::create('payment_gateways', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 100)->nullable();
+            $table->json('title')->nullable();
             $table->string('type', 100)->nullable();
             $table->tinyInteger('status')->nullable()->default('1')->comment('1- Active , 0- InActive');
             $table->tinyInteger('is_test')->nullable()->default('1')->comment('1- Yes , 0- No');
