@@ -160,7 +160,7 @@ class DashboardController extends Controller
             $user = User::where('id',$request->customer_id)->first();
             $notification = count($user->unreadNotifications);
         }
-        $language_option =settingSession('get')->language_option;
+        $language_option = settingSession('get')->language_option;
         $language_array = languagesArray($language_option)->toArray();
         foreach ($language_array as &$value) {
             $value['flag_image'] = file_exists(public_path('/images/flags/' . $value['id'] . '.png')) ? asset('/images/flags/' . $value['id'] . '.png') : asset('/images/language.png');
