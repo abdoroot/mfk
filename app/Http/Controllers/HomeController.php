@@ -186,14 +186,35 @@ class HomeController extends Controller
                 $role->save();
                 break;
             case 'category_status':
-
                 $category = \App\Models\Category::find($request->id);
+                $category->status = $request->status;
+                $category->save();
+                break;
+            case 'store_category_status':
+                $category = \App\Models\StoreCategory::find($request->id);
+                $category->status = $request->status;
+                $category->save();
+                break;
+            case 'store_subcategory_status':
+                $category = \App\Models\StoreSubCategory::find($request->id);
                 $category->status = $request->status;
                 $category->save();
                 break;
             case 'category_featured':
                 $message_form = __('messages.category');
                 $category = \App\Models\Category::find($request->id);
+                $category->is_featured = $request->status;
+                $category->save();
+                break;
+            case 'store_category_featured':
+                $message_form = __('messages.category');
+                $category = \App\Models\StoreCategory::find($request->id);
+                $category->is_featured = $request->status;
+                $category->save();
+                break;
+            case 'store_subcategory_featured':
+                $message_form = __('messages.category');
+                $category = \App\Models\StoreSubCategory::find($request->id);
                 $category->is_featured = $request->status;
                 $category->save();
                 break;
@@ -335,6 +356,25 @@ class HomeController extends Controller
                 break;
             case 'subcategory':
                 $items = \App\Models\SubCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1);
+
+                if ($value != '') {
+                    $items->where('name', 'LIKE', '%' . $value . '%');
+                }
+
+                $items = $items->get();
+                break;
+
+            case 'store_category':
+                $items = \App\Models\StoreCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1);
+
+                if ($value != '') {
+                    $items->where('name', 'LIKE', '%' . $value . '%');
+                }
+
+                $items = $items->get();
+                break;
+            case 'store_subcategory':
+                $items = \App\Models\StoreSubCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('status', 1);
 
                 if ($value != '') {
                     $items->where('name', 'LIKE', '%' . $value . '%');

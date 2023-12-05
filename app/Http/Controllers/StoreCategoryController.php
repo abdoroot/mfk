@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Models\SubCategory;
+use App\Models\StoreCategory;
+use App\Models\StoreSubCategory;
 use App\Models\Service;
 use App\Models\ServicePackage;
 use App\Models\Booking;
@@ -20,7 +21,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Database\Eloquent\Builder;
 use League\CommonMark\Node\Block\Document as BlockDocument;
 
-class CategoryController extends Controller
+class StoreCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,13 +36,13 @@ class CategoryController extends Controller
         $pageTitle = trans('messages.list_form_title', ['form' => trans('messages.category')]);
         $auth_user = authSession();
         $assets = ['datatable'];
-        return view('category.index', compact('pageTitle', 'auth_user', 'assets', 'filter'));
+        return view('store.category.index', compact('pageTitle', 'auth_user', 'assets', 'filter'));
     }
 
 
     public function index_data(DataTables $datatable, Request $request)
     {
-        $query = Category::query()->list();
+        $query = StoreCategory::query()->list();
         $filter = $request->filter;
 
         if (isset($filter)) {
@@ -59,7 +60,7 @@ class CategoryController extends Controller
 
             ->editColumn('name', function ($query) {
                 if (auth()->user()->can('category edit')) {
-                    $link = '<a class="btn-link btn-link-hover" href=' . route('category.create', ['id' => $query->id]) . '>' . $query->name . '</a>';
+                    $link = '<a class="btn-link btn-link-hover" href=' . route('store-category.create', ['id' => $query->id]) . '>' . $query->name . '</a>';
                 } else {
                     $link = $query->name;
                 }
@@ -67,14 +68,14 @@ class CategoryController extends Controller
             })
 
             ->addColumn('action', function ($data) {
-                return view('category.action', compact('data'))->render();
+                return view('store.category.action', compact('data'))->render();
             })
             ->editColumn('is_featured', function ($query) {
                 $disabled = $query->trashed() ? 'disabled' : '';
 
                 return '<div class="custom-control custom-switch custom-switch-text custom-switch-color custom-control-inline">
                     <div class="custom-switch-inner">
-                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_featured" ' . ($query->is_featured ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="f' . $query->id . '" data-id="' . $query->id . '">
+                        <input type="checkbox" class="custom-control-input  change_status" data-type="store_category_featured"  ' . ($query->is_featured ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="f' . $query->id . '" data-id="' . $query->id . '">
                         <label class="custom-control-label" for="f' . $query->id . '" data-on-label="' . __("messages.yes") . '" data-off-label="' . __("messages.no") . '"></label>
                     </div>
                 </div>';
@@ -83,7 +84,7 @@ class CategoryController extends Controller
                 $disabled = $query->trashed() ? 'disabled' : '';
                 return '<div class="custom-control custom-switch custom-switch-text custom-switch-color custom-control-inline">
                     <div class="custom-switch-inner">
-                        <input type="checkbox" class="custom-control-input  change_status" data-type="category_status" ' . ($query->status ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="' . $query->id . '" data-id="' . $query->id . '">
+                        <input type="checkbox" class="custom-control-input  change_status" data-type="store_category_status"  ' . ($query->status ? "checked" : "") . '  ' . $disabled . ' value="' . $query->id . '" id="' . $query->id . '" data-id="' . $query->id . '">
                         <label class="custom-control-label" for="' . $query->id . '" data-on-label="" data-off-label=""></label>
                     </div>
                 </div>';
@@ -147,7 +148,7 @@ class CategoryController extends Controller
         $id = $request->id;
         $auth_user = authSession();
 
-        $categorydata = Category::find($id);
+        $categorydata = StoreCategory::find($id);
 
         $pageTitle = trans('messages.update_form_title', ['form' => trans('messages.category')]);
 
@@ -156,7 +157,7 @@ class CategoryController extends Controller
             $categorydata = new Category;
         }
 
-        return view('category.create', compact('pageTitle', 'categorydata', 'auth_user'));
+        return view('store.category.create', compact('pageTitle', 'categorydata', 'auth_user'));
     }
 
     /**
@@ -174,7 +175,7 @@ class CategoryController extends Controller
         $data = $request->all();
         $data['is_featured'] = $request->has('is_featured') ? 1 : 0;
 
-        $category = Category::updateOrCreate(['id' => $data['id']], []);
+        $category = StoreCategory::updateOrCreate(['id' => $data['id']], []);
 
         // Store name and description translations
         $category->setTranslation('name', 'ar', $request->name['ar'] ?? '');
@@ -203,7 +204,7 @@ class CategoryController extends Controller
             return comman_message_response($message);
         }
 
-        return redirect(route('category.index'))->withSuccess($message);
+        return redirect(route('store-category.index'))->withSuccess($message);
     }
 
 
@@ -252,7 +253,7 @@ class CategoryController extends Controller
         if (demoUserPermission()) {
             return redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
         }
-        $category = Category::find($id);
+        $category = StoreCategory::find($id);
 
         $msg = __('messages.msg_fail_to_delete', ['name' => __('messages.category')]);
 
@@ -271,7 +272,7 @@ class CategoryController extends Controller
     public function action(Request $request)
     {
         $id = $request->id;
-        $category = Category::withTrashed()->where('id', $id)->first();
+        $category = StoreCategory::withTrashed()->where('id', $id)->first();
         $msg = __('messages.t_found_entry', ['name' => __('messages.category')]);
         if ($request->type == 'restore') {
             $category->restore();
@@ -295,10 +296,10 @@ class CategoryController extends Controller
 
         switch ($type) {
             case 'category':
-                $InTrash = Category::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
+                $InTrash = StoreCategory::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
                 break;
             case 'subcategory':
-                $InTrash = SubCategory::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
+                $InTrash = StoreSubCategory::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();
                 break;
             case 'service':
                 $InTrash = Service::withTrashed()->whereIn('id', $ids)->whereNotNull('deleted_at')->get();

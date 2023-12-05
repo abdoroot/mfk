@@ -70,10 +70,10 @@ function checkMenuRoleAndPermission($menu)
 
 function checkRolePermission($role,$permission){
     try{
+       echo 'perm';exit(0);
         if($role->hasPermissionTo($permission)){
             return true;
         }
-        return false;
     }catch (Exception $e){
         return false;
     }
