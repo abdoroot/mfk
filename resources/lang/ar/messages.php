@@ -665,6 +665,8 @@
     'add_ons' => 'إضافات',
     'name_in_arabic' => 'الاسم بالعربية',
     'name_in_english' => 'الاسم بالانجليزية',
+    'description_in_arabic' => 'الوصف بالعربية',
+    'description_in_english' => 'الوصف بالانجليزية',
     'store' => 'المتجر',
 )
     ?>

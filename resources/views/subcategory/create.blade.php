@@ -20,13 +20,13 @@
                             {{ Form::hidden('id') }}
                             <div class="row">
                                 <div class="form-group col-md-4">
-                                    {{ Form::label('name_ar', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                    {{ Form::label('name_ar', __('messages.name_in_arabic').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
                                     {{ Form::text('name[ar]', $subcategory->getTranslation('name', 'ar'), ['placeholder' => __('messages.name_in_arabic'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>
                                 
                                 <div class="form-group col-md-4">
-                                    {{ Form::label('name_en', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                    {{ Form::label('name_en', __('messages.name_in_english').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
                                     {{ Form::text('name[en]', $subcategory->getTranslation('name', 'en'), ['placeholder' => __('messages.name_in_english'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>
@@ -79,12 +79,13 @@
                                 @endif
                                 
                                 <div class="form-group col-md-12">
+                                    {{ Form::label('description', trans('messages.description_in_arabic'), ['class' => 'form-control-label']) }}
                                     {{ Form::textarea('description[ar]', $subcategory->getTranslation('description', 'ar'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_arabic')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>
     
                                 <div class="form-group col-md-12">
-                                    {{ Form::label('description', trans('messages.description'), ['class' => 'form-control-label']) }}
+                                    {{ Form::label('description', trans('messages.description_in_english'), ['class' => 'form-control-label']) }}
                                     {{ Form::textarea('description[en]', $subcategory->getTranslation('description', 'en'), ['class' => 'form-control textarea', 'rows' => 3, 'placeholder' => __('messages.description_in_english')]) }}
                                     <small class="help-block with-errors text-danger"></small>
                                 </div>

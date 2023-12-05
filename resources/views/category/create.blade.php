@@ -16,18 +16,17 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        /////////todo edit language abdoroot
                         {{ Form::model($categorydata,['method' => 'POST','route'=>'category.store', 'enctype'=>'multipart/form-data', 'data-toggle'=>"validator" ,'id'=>'category'] ) }}
                         {{ Form::hidden('id') }}
                         <div class="row">
                             <div class="form-group col-md-4">
-                                {{ Form::label('name_ar', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::label('name_ar', __('messages.name_in_arabic').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
                                 {{ Form::text('name[ar]', $categorydata->getTranslation('name', 'ar'), ['placeholder' => __('messages.name_in_arabic'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                                 <small class="help-block with-errors text-danger"></small>
                             </div>
                             
                             <div class="form-group col-md-4">
-                                {{ Form::label('name_en', __('messages.name').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
+                                {{ Form::label('name_en', __('messages.name_in_english').' <span class="text-danger">*</span>', ['class' => 'form-control-label'], false) }}
                                 {{ Form::text('name[en]', $categorydata->getTranslation('name', 'en'), ['placeholder' => __('messages.name_in_english'), 'class' => 'form-control', 'required', 'title' => __('validation.alpha_spaces')]) }}
                                 <small class="help-block with-errors text-danger"></small>
                             </div>

@@ -665,6 +665,8 @@
     'add_ons' => 'Add Ons',
     'name_in_arabic' => 'Name in Arabic',
     'name_in_english' => 'Name in English',
+    'description_in_arabic' => 'Description in arabic',
+    'description_in_english' => 'Description in english',
     'store' => 'Store',
 
 )
