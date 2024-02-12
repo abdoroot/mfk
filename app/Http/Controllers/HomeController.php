@@ -167,15 +167,6 @@ class HomeController extends Controller
     }
     public function changeStatus(Request $request)
     {
-        if (demoUserPermission()) {
-            $message = __('messages.demo_permission_denied');
-            $response = [
-                'status' => false,
-                'message' => $message
-            ];
-
-            return comman_custom_response($response);
-        }
         $type = $request->type;
         $message_form = __('messages.item');
         $message = trans('messages.update_form', ['form' => trans('messages.status')]);
@@ -190,6 +181,11 @@ class HomeController extends Controller
                 $category->status = $request->status;
                 $category->save();
                 break;
+            case 'user_subscriptions_plan_status':
+                $category = \App\Models\UserSubscription::find($request->id);
+                $category->status = $request->status;
+                $category->save();
+                break;    
             case 'store_category_status':
                 $category = \App\Models\StoreCategory::find($request->id);
                 $category->status = $request->status;

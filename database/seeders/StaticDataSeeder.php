@@ -59,6 +59,43 @@ class StaticDataSeeder extends Seeder
                 'value' => 'featured_service',
                 'created_at' => '2022-04-21 12:23:03',
                 'updated_at' => '2022-04-21 12:23:03',
+            ),
+            5 => 
+            array (
+                'id' => 6,
+                'type' => 'user_subscription_plan_type',
+                'label' => 'Monthly',
+                'value' => 'monthly',
+                'created_at' => '2022-04-21 12:23:03',
+                'updated_at' => '2022-04-21 12:23:03',
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'type' => 'user_subscription_plan_type',
+                'label' => 'Three Months',
+                'value' => 'three_monthly',
+                'created_at' => '2022-04-21 12:23:03',
+                'updated_at' => '2022-04-21 12:23:03',
+            )
+            ,
+            7 => 
+            array (
+                'id' => 8,
+                'type' => 'user_subscription_plan_type',
+                'label' => 'Six Months',
+                'value' => 'six_monthly',
+                'created_at' => '2022-04-21 12:23:03',
+                'updated_at' => '2022-04-21 12:23:03',
+            ),
+            8 => 
+            array (
+                'id' => 9,
+                'type' => 'user_subscription_plan_type',
+                'label' => 'Yearly',
+                'value' => 'yearly',
+                'created_at' => '2022-04-21 12:23:03',
+                'updated_at' => '2022-04-21 12:23:03',
             )
         ));
     }

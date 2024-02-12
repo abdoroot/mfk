@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
+
+class UserSubscription extends Model
+{
+    use HasFactory,HasTranslations;
+
+    protected $fillable = [
+        'title', 'amount','status','description','plan_type','category_id','subcategory_id'
+    ];
+
+    protected $casts = [
+        'amount'    => 'double',
+    ];
+
+    public $translatable = ['title','description'];
+
+    public function category(){
+        return $this->belongsTo('App\Models\Category','category_id','id')->withTrashed();
+    }
+    public function subcategory(){
+        return $this->belongsTo('App\Models\SubCategory','subcategory_id','id')->withTrashed();
+    }
+}

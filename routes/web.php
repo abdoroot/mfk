@@ -42,6 +42,7 @@ use App\Http\Controllers\ProviderSlotController;
 use App\Http\Controllers\ServiceAddonController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
+use App\Http\Controllers\UserSubscriptionController;
 
 
 
@@ -406,6 +407,13 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('serviceaddon-bulk-action', [ServiceAddonController::class, 'bulk_action'])->name('serviceaddon.bulk-action');
     });
 
+    Route::group(['middleware' => ['permission:user list']], function () {
+        Route::resource('user-subscriptions', UserSubscriptionController::class);
+        Route::get('user-subscriptions/plans', [UserSubscriptionController::class, 'index']);
+        Route::get('user-subscriptions-data', [UserSubscriptionController::class, 'index_data'])->name('user_subscriptions.index_data');
+        Route::delete('user-subscription/{id}', [UserSubscriptionController::class, 'destroy'])->name('user_subscriptions.destroy');
+        Route::post('user-subscriptions-bulk-action', [UserSubscriptionController::class, 'index_data'])->name('user-subscriptions.bulk-action');
+    });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');
 Route::post('/service-list', [HomeController::class, 'getAjaxServiceList'])->name('service-list');
