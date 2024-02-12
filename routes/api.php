@@ -115,6 +115,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('provider-payout-list', [ API\PayoutController::class, 'providerPayoutList' ] );
     Route::get('handyman-payout-list', [ API\PayoutController::class, 'handymanPayoutList' ] );
 
+    
     Route::get('plan-list', [ API\PlanController::class, 'planList' ] );
     Route::post('save-subscription', [ API\SubscriptionController::class, 'providerSubscribe' ] );
     Route::post('cancel-subscription', [ API\SubscriptionController::class, 'cancelSubscription' ] );
@@ -157,9 +158,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user-favourite-provider',[ API\ProviderFavouriteController::class, 'getUserFavouriteProvider' ]);
     Route::post('download-invoice',[API\CommanController::class,'downloadInvoice']);
     Route::get('user-wallet-balance',[API\User\UserController::class,'userWalletBalance']);
-    
-
-
     Route::get('configurations', [ API\DashboardController::class, "configurations"]);
+
+    Route::get('user-subscription-list', [ API\UserSubscriptionController::class, 'subscriptionList' ] );
 
 });
