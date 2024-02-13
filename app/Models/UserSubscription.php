@@ -11,7 +11,7 @@ class UserSubscription extends Model
     use HasFactory,HasTranslations;
 
     protected $fillable = [
-        'title', 'amount','status','description','plan_type','category_id','subcategory_id'
+        'provider_id','title', 'amount','status','description','plan_type','category_id','subcategory_id'
     ];
 
     protected $casts = [
@@ -25,5 +25,9 @@ class UserSubscription extends Model
     }
     public function subcategory(){
         return $this->belongsTo('App\Models\SubCategory','subcategory_id','id')->withTrashed();
+    }
+
+    public function providers(){
+        return $this->belongsTo('App\Models\User','provider_id','id')->withTrashed();
     }
 }

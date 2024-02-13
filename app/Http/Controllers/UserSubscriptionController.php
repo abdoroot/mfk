@@ -152,6 +152,8 @@ class UserSubscriptionController extends Controller
             'subcategory_id'=> $requestData['subcategory_id']
         ];
 
+        $planData['provider_id'] = !empty($request->provider_id) ? $request->provider_id : auth()->user()->id;
+        
         if(empty($request->id) && $request->id == null){
             $planData['identifier'] = strtolower($requestData['title']["en"] ?? "");
         }

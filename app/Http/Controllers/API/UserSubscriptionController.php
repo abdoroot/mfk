@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\UserSubscription;
 use App\Models\ProviderSubscription;
 use App\Http\Resources\API\UserSubscriptionResource;
+use App\Http\Resources\API\UserSubscriptionDetailResource;
+use App\Http\Resources\API\UserResource;
 
 class UserSubscriptionController extends Controller
 {
-    public function subscriptionList(Request $request)
+    public function subscriptionPlanList(Request $request)
     {
         $subscriptions = UserSubscription::where('status', 1);
         $user_id = auth()->id();
@@ -47,6 +49,23 @@ class UserSubscriptionController extends Controller
                 'previous_page' => $items->previousPageUrl(),
             ],
             'data' => $items,
+        ];
+
+        return comman_custom_response($response);
+    }
+
+    public function showPlan($id) {
+        $plan = UserSubscription::where('status',1)->with('providers','category','subcategory')->find($id);
+        if(empty($plan)){
+            $message = __('messages.record_not_found');
+            return comman_message_response($message,406);   
+        }
+
+        $plan_detail = new UserSubscriptionDetailResource($plan);
+
+        $response = [
+            'service_detail'    => $plan_detail,
+            'provider'          => new UserResource(optional($plan->providers)),
         ];
 
         return comman_custom_response($response);

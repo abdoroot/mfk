@@ -15,6 +15,7 @@ class CreateUserSubscriptionsTable extends Migration
     {
         Schema::create('user_subscriptions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('provider_id');
             $table->json('title');
             $table->tinyInteger('status')->nullable()->default('0');
             $table->unsignedBigInteger('category_id')->notnull();
