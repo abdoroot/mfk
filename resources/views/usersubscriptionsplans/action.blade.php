@@ -2,10 +2,10 @@
 <?php
     $auth_user= authSession();
 ?>
-{{ Form::open(['route' => ['user_subscriptions.destroy', $plan->id], 'method' => 'delete','data--submit'=>'plan'.$plan->id]) }}
+{{ Form::open(['route' => ['user-subscriptions-plan.destroy', $plan->id], 'method' => 'delete','data--submit'=>'plan'.$plan->id]) }}
 <div class="d-flex justify-content-end align-items-center">
     @if(auth()->user()->hasAnyRole(['admin']))
-        <a class="mr-3" href="{{ route('user_subscriptions.destroy', $plan->id) }}" data--submit="plan{{$plan->id}}" 
+        <a class="mr-3" href="{{ route('user-subscriptions-plan.destroy', $plan->id) }}" data--submit="plan{{$plan->id}}" 
             data--confirmation='true' 
             data--ajax="true"
             data-datatable="reload"

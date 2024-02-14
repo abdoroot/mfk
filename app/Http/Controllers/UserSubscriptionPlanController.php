@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\UserSubscription;
+use App\Models\UserSubscriptionPlan;
 use App\Models\StaticData;
 use Yajra\DataTables\DataTables;
 use App\Models\Category;
 use App\Models\SubCategory;
 
-class UserSubscriptionController extends Controller
+class UserSubscriptionPlanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,15 +21,15 @@ class UserSubscriptionController extends Controller
         $filter = [
             'status' => $request->status,
         ];
-        $pageTitle = trans('messages.list_form_title',['form' => trans('messages.usersubscriptions')] );
+        $pageTitle = trans('messages.list_form_title',['form' => trans('messages.usersubscriptionsplan')] );
         $auth_user = authSession();
         $assets = ['datatable'];
-        return view('usersubscriptions.index', compact('pageTitle','auth_user','assets','filter'));
+        return view('usersubscriptionsplans.index', compact('pageTitle','auth_user','assets','filter'));
     }
 
     public function index_data(DataTables $datatable,Request $request)
     {
-        $query = UserSubscription::query();
+        $query = UserSubscriptionPlan::query();
         $filter = $request->filter;
 
         if (isset($filter)) {
@@ -50,7 +50,7 @@ class UserSubscriptionController extends Controller
            
             ->editColumn('title', function($query){                
                 if (auth()->user()->can('category edit')) {
-                    $link = '<a class="btn-link btn-link-hover" href='.route('user-subscriptions.create', ['id' => $query->id]).'>'.$query->title.'</a>';
+                    $link = '<a class="btn-link btn-link-hover" href='.route('user-subscriptions-plan.create', ['id' => $query->id]).'>'.$query->title.'</a>';
                 } else {
                     $link = $query->title; 
                 }
@@ -76,7 +76,7 @@ class UserSubscriptionController extends Controller
                 return $price;
             })
             ->addColumn('action', function($plan){
-                return view('usersubscriptions.action',compact('plan'))->render();
+                return view('usersubscriptionsplans.action',compact('plan'))->render();
             })
             ->addIndexColumn()
             ->rawColumns(['title','action','status','check'])
@@ -94,12 +94,12 @@ class UserSubscriptionController extends Controller
 
         switch ($actionType) {
             case 'change-status':
-                $branches = UserSubscription::whereIn('id', $ids)->update(['status' => $request->status]);
+                $branches = UserSubscriptionPlan::whereIn('id', $ids)->update(['status' => $request->status]);
                 $message = 'Bulk Plans Status Updated';
                 break;
 
             case 'delete':
-                UserSubscription::whereIn('id', $ids)->delete();
+                UserSubscriptionPlan::whereIn('id', $ids)->delete();
                 $message = 'Bulk Plans Deleted';
                 break;
 
@@ -121,23 +121,23 @@ class UserSubscriptionController extends Controller
         $id = $request->id;
         $auth_user = authSession();
 
-        $plan = UserSubscription::find($id);
+        $plan = UserSubscriptionPlan::find($id);
         $plan_type = StaticData::where('type','user_subscription_plan_type')->get();
-        $pageTitle = trans('messages.update_form_title',['form'=>trans('messages.usersubscriptions')]);
+        $pageTitle = trans('messages.update_form_title',['form'=>trans('messages.usersubscriptionsplan')]);
         
         if($plan == null){
             $pageTitle = trans('messages.add_button_form',['form' => trans('messages.plan')]);
-            $plan = new UserSubscription;
+            $plan = new UserSubscriptionPlan;
         }
         
-        return view('usersubscriptions.create', compact('pageTitle' ,'plan' ,'auth_user','plan_type' ));
+        return view('usersubscriptionsplans.create', compact('pageTitle' ,'plan' ,'auth_user','plan_type' ));
     }
 
 
     public function store(Request $request)
     {
         $requestData = $request->all();
-        $plans = UserSubscription::where('title', '=', $requestData['title'])->first();
+        $plans = UserSubscriptionPlan::where('title', '=', $requestData['title'])->first();
         if ($plans !== null && $request->id == null) {
             return  redirect()->back()->withErrors(__('validation.unique',['attribute'=>__('messages.plan')]));
         }
@@ -158,7 +158,7 @@ class UserSubscriptionController extends Controller
             $planData['identifier'] = strtolower($requestData['title']["en"] ?? "");
         }
 
-        $result = UserSubscription::updateOrCreate(['id' => $requestData['id'] ],$planData);
+        $result = UserSubscriptionPlan::updateOrCreate(['id' => $requestData['id'] ],$planData);
         
         $message = trans('messages.update_form',['form' => trans('messages.plan')]);
 
@@ -166,7 +166,7 @@ class UserSubscriptionController extends Controller
             $message = trans('messages.save_form',['form' => trans('messages.plan')]);
         }
 
-        return redirect(route('user-subscriptions.index'))->withSuccess($message);        
+        return redirect(route('user-subscriptions-plan.index'))->withSuccess($message);        
     }
 
     /**
@@ -195,7 +195,7 @@ class UserSubscriptionController extends Controller
     public function destroy($id)
     {
 
-        $plan = UserSubscription::find($id);
+        $plan = UserSubscriptionPlan::find($id);
         $msg= __('messages.msg_fail_to_delete',['item' => __('messages.plan')] );
         
         if($plan!='') {

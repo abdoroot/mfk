@@ -42,7 +42,7 @@ use App\Http\Controllers\ProviderSlotController;
 use App\Http\Controllers\ServiceAddonController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
-use App\Http\Controllers\UserSubscriptionController;
+use App\Http\Controllers\UserSubscriptionPlanController;
 
 
 
@@ -408,11 +408,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     });
 
     Route::group(['middleware' => ['permission:user list']], function () {
-        Route::resource('user-subscriptions', UserSubscriptionController::class);
-        Route::get('user-subscriptions/plans', [UserSubscriptionController::class, 'index']);
-        Route::get('user-subscriptions-data', [UserSubscriptionController::class, 'index_data'])->name('user_subscriptions.index_data');
-        Route::delete('user-subscription/{id}', [UserSubscriptionController::class, 'destroy'])->name('user_subscriptions.destroy');
-        Route::post('user-subscriptions-bulk-action', [UserSubscriptionController::class, 'index_data'])->name('user-subscriptions.bulk-action');
+        Route::resource('user-subscriptions-plan', UserSubscriptionPlanController::class);
+        Route::get('user-subscriptions-data', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.index_data');
+        Route::delete('user-subscription/{id}', [UserSubscriptionPlanController::class, 'destroy'])->name('user-subscriptions-plan.destroy');
+        Route::post('user-subscriptions-bulk-action', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.bulk-action');
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');

@@ -13,7 +13,7 @@ class CreateUserSubscriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_subscriptions', function (Blueprint $table) {
+        Schema::create('user_subscriptions_plans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('provider_id');
             $table->json('title');

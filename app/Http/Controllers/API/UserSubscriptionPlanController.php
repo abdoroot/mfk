@@ -4,17 +4,17 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\UserSubscription;
+use App\Models\UserSubscriptionPlan;
 use App\Models\ProviderSubscription;
 use App\Http\Resources\API\UserSubscriptionResource;
 use App\Http\Resources\API\UserSubscriptionDetailResource;
 use App\Http\Resources\API\UserResource;
 
-class UserSubscriptionController extends Controller
+class UserSubscriptionPlanController extends Controller
 {
     public function subscriptionPlanList(Request $request)
     {
-        $subscriptions = UserSubscription::where('status', 1);
+        $subscriptions = UserSubscriptionPlan::where('status', 1);
         $user_id = auth()->id();
         
         $get_user_free_plan = ProviderSubscription::where('user_id', $user_id)->first();
@@ -55,7 +55,7 @@ class UserSubscriptionController extends Controller
     }
 
     public function showPlan($id) {
-        $plan = UserSubscription::where('status',1)->with('providers','category','subcategory')->find($id);
+        $plan = UserSubscriptionPlan::where('status',1)->with('providers','category','subcategory')->find($id);
         if(empty($plan)){
             $message = __('messages.record_not_found');
             return comman_message_response($message,406);   
@@ -69,5 +69,26 @@ class UserSubscriptionController extends Controller
         ];
 
         return comman_custom_response($response);
+    }
+
+    public function SubscribeRequest(Request $request){
+        /*
+        status
+        customer_id
+        plan_id
+        provider_id
+        date
+        start_at
+        end_at
+        amount
+        discount
+        coupon_id
+        tax
+        total_amount
+        address
+        
+        payment_id
+        $table->softDeletes()
+        */
     }
 }

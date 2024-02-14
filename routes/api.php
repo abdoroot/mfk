@@ -160,8 +160,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user-wallet-balance',[API\User\UserController::class,'userWalletBalance']);
     Route::get('configurations', [ API\DashboardController::class, "configurations"]);
 
-    Route::get('user-subscription-plan-list', [ API\UserSubscriptionController::class, 'subscriptionPlanList' ] );
-    Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionController::class, 'showPlan' ] );
-    Route::post('user-subscription-booking', [ API\UserSubscriptionBookingController::class, 'Store' ] );
-
+    Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::class, 'subscriptionPlanList' ] );
+    Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
+    Route::post('user-subscription-request', [ API\UserSubscriptionPlanController::class, 'SubscribeRequest' ] );
 });

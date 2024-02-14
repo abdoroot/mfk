@@ -10,7 +10,7 @@
                     <div class="card-body p-0">
                         <div class="d-flex justify-content-between align-items-center p-3 flex-wrap gap-3">
                             <h5 class="font-weight-bold">{{ $pageTitle ?? trans('messages.list') }}</h5>
-                            <a href="{{ route('user-subscriptions.create') }}" class="float-right mr-1 btn btn-sm btn-primary"><i class="fa fa-plus-circle"></i> {{ trans('messages.add_form_title',['form' => trans('messages.plan')  ]) }}</a>
+                            <a href="{{ route('user-subscriptions-plan.create') }}" class="float-right mr-1 btn btn-sm btn-primary"><i class="fa fa-plus-circle"></i> {{ trans('messages.add_form_title',['form' => trans('messages.plan')  ]) }}</a>
                         </div>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
         <div class="row justify-content-between">
             <div>
                 <div class="col-md-12">
-                  <form action="{{ route('user-subscriptions.bulk-action') }}" id="quick-action-form" class="form-disabled d-flex gap-3 align-items-center">
+                  <form action="{{ route('user-subscriptions-plan.bulk-action') }}" id="quick-action-form" class="form-disabled d-flex gap-3 align-items-center">
                     @csrf
                   <select name="action_type" class="form-control select2" id="quick-action-type" style="width:100%" disabled>
                       <option value="">{{__('messages.no_action')}}</option>
@@ -37,7 +37,7 @@
                     </select>
                 </div>
                 <button id="quick-action-apply" class="btn btn-primary" data-ajax="true"
-                data--submit="{{ route('user-subscriptions.bulk-action') }}"
+                data--submit="{{ route('user-subscriptions-plan.bulk-action') }}"
                 data-datatable="reload" data-confirmation='true'
                 data-title="{{ __('plans',['form'=>  __('plans') ]) }}"
                 title="{{ __('plans',['form'=>  __('plans') ]) }}"
@@ -78,7 +78,7 @@
                 dom: '<"row align-items-center"><"table-responsive my-3" rt><"row align-items-center" <"col-md-6" l><"col-md-6" p>><"clear">',
                 ajax: {
                   "type"   : "GET",
-                  "url"    : '{{ route("user_subscriptions.index_data") }}',
+                  "url"    : '{{ route("user-subscriptions-plan.index_data") }}',
                   "data"   : function( d ) {
                     d.search = {
                       value: $('.dt-search').val()
