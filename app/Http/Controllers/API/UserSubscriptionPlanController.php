@@ -70,25 +70,4 @@ class UserSubscriptionPlanController extends Controller
 
         return comman_custom_response($response);
     }
-
-    public function SubscribeRequest(Request $request){
-        /*
-        status
-        customer_id
-        plan_id
-        provider_id
-        date
-        start_at
-        end_at
-        amount
-        discount
-        coupon_id
-        tax
-        total_amount
-        address
-        
-        payment_id
-        $table->softDeletes()
-        */
-    }
 }

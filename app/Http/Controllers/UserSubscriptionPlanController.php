@@ -42,6 +42,9 @@ class UserSubscriptionPlanController extends Controller
         if (auth()->user()->hasAnyRole(['admin'])) {
             $query->newQuery();
         }
+
+        $provider_id = auth()->user()->id;
+        $query->where('provider_id',$provider_id);
         
         return $datatable->eloquent($query)
             ->addColumn('check', function ($row) {

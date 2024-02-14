@@ -182,7 +182,7 @@ class HomeController extends Controller
                 $category->save();
                 break;
             case 'user_subscriptions_plan_status':
-                $category = \App\Models\UserSubscription::find($request->id);
+                $category = \App\Models\UserSubscriptionPlan::find($request->id);
                 $category->status = $request->status;
                 $category->save();
                 break;    

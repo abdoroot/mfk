@@ -212,6 +212,42 @@ function getMediaFileExit($model, $collection = 'profile_image')
     return getFileExistsCheck($media);
 }
 
+function sendUserSubscriptionOrderNotification($data,$sendTo = ['admin', 'provider']){
+    $customer_name = $data->customer->display_name;
+    $notification_data = [
+        'id' => $data->id,
+        'type' => 'add_user_subscription_order',
+        'subject' => 'add_user_subscription_order',
+        'message' => __('messages.user_subscription_order_added', ['name' => $customer_name]),
+        "ios_badgeType" => "Increase",
+        "ios_badgeCount" => 1,
+        "notification-type" => 'user_subscription_order'
+    ];
+    foreach ($sendTo as $to) {
+        switch ($to) {
+            case 'admin':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'admin');
+                break;
+            case 'provider':
+                $user = \App\Models\User::getUserByKeyValue('id', $data->provider_id);
+                break;
+            case 'handyman':
+                $handymans = $data['booking']->handymanAdded->pluck('handyman_id');
+                foreach ($handymans as $id) {
+                    $user = \App\Models\User::getUserByKeyValue('id', $id);
+                    sendNotification('provider', $user, $notification_data);
+                }
+                break;
+            case 'user':
+                $user = \App\Models\User::getUserByKeyValue('id', $data->customer_id);
+                break;
+        }
+        if ($to != 'handyman') {
+            sendNotification($to, $user, $notification_data);
+        }
+    }
+}
+
 function saveBookingActivity($data)
 {
     $admin = \App\Models\AppSetting::first();

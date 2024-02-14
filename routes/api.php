@@ -162,5 +162,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::class, 'subscriptionPlanList' ] );
     Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
-    Route::post('user-subscription-request', [ API\UserSubscriptionPlanController::class, 'SubscribeRequest' ] );
+    Route::post('user-subscription-order', [API\UserSubscriptionOrderController::class, 'store' ] );
 });

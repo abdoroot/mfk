@@ -407,7 +407,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('serviceaddon-bulk-action', [ServiceAddonController::class, 'bulk_action'])->name('serviceaddon.bulk-action');
     });
 
-    Route::group(['middleware' => ['permission:user list']], function () {
+    Route::group(['middleware' => ['permission:category list']], function () {
         Route::resource('user-subscriptions-plan', UserSubscriptionPlanController::class);
         Route::get('user-subscriptions-data', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.index_data');
         Route::delete('user-subscription/{id}', [UserSubscriptionPlanController::class, 'destroy'])->name('user-subscriptions-plan.destroy');
