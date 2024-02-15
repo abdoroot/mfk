@@ -25,6 +25,7 @@ class UserSubscriptionOrderController extends Controller
         $plan_data = Plan::find($data['plan_id']);
         
         $data['provider_id'] = !empty($data['provider_id']) ? $data['provider_id']: $plan_data->provider_id;
+        $data['customer_id'] = auth()->user()->id;
         
         if($request->has('tax') && $request->tax != null) {
             $data['tax'] = json_encode($request->tax);

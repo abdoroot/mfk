@@ -43,6 +43,7 @@ use App\Http\Controllers\ServiceAddonController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
 use App\Http\Controllers\UserSubscriptionPlanController;
+use App\Http\Controllers\UserSubscriptionOrderController;
 
 
 
@@ -412,6 +413,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('user-subscriptions-data', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.index_data');
         Route::delete('user-subscription/{id}', [UserSubscriptionPlanController::class, 'destroy'])->name('user-subscriptions-plan.destroy');
         Route::post('user-subscriptions-bulk-action', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.bulk-action');
+
+        Route::get('user-subscriptions', [UserSubscriptionOrderController::class, 'index'])->name('user-subscriptions.index');
+        Route::get('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'show'])->name('user-subscriptions.show');
+        Route::get('user-subscriptions-index-data', [UserSubscriptionOrderController::class, 'index_data'])->name('user-subscriptions.index_data');
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');

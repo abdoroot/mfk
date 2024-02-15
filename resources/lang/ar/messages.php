@@ -668,5 +668,10 @@
     'description_in_arabic' => 'الوصف بالعربية',
     'description_in_english' => 'الوصف بالانجليزية',
     'store' => 'المتجر',
+    'user_subscriptions' => 'اشراكات المستخدمين' ,
+    'user_subscriptions_plans' => 'خطط اشتراكات المستخدمين',
+    'order_date' => 'تاريخ الطلب',
+    'subscriptions' => 'الاشتراكات',
+
 )
     ?>

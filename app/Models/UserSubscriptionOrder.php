@@ -66,12 +66,9 @@ class UserSubscriptionOrder extends Model
         return $this->belongsTo(Payment::class, 'payment_id');
     }
 
-    public function scopeMyBooking($query){
+    public function scopeMyOrder($query){
         $user = auth()->user();
-        if($user->hasRole('admin') || $user->hasRole('demo_admin')) {
-            return $query;
-        }
-
+    
         if($user->hasRole('provider')) {
             return $query->where('provider_id', $user->id);
         }

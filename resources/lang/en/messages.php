@@ -668,6 +668,10 @@
     'description_in_arabic' => 'Description in arabic',
     'description_in_english' => 'Description in english',
     'store' => 'Store',
+    'user_subscriptions' => 'User Subscriptions',
+    'user_subscriptions_plans' => 'Users Plans',
+    'order_date' => 'Order Date',
+    'subscriptions' => 'Subscriptions',
 
 )
     ?>
