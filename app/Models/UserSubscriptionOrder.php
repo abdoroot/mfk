@@ -18,6 +18,7 @@ class UserSubscriptionOrder extends Model
         'date',
         'start_at',
         'end_at',
+        'quantity',
         'amount',
         'discount',
         'coupon_id',

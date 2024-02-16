@@ -27,7 +27,7 @@ class CreateUserSubscriptionOrderRequest extends FormRequest
             'plan_id' => 'required|integer',
             'customer_id' => 'required|integer',
             'address' => 'required|string',
-            'amount' => 'required|numeric',
+            'amount' => 'numeric',
             'tax' => 'required|numeric',
             'discount' => 'numeric',
             'total_amount' => 'required|numeric',

@@ -31,6 +31,11 @@ class UserSubscriptionOrderController extends Controller
             $data['tax'] = json_encode($request->tax);
         }
 
+
+        if(!$request->has('quantity')) {
+            $data['quantity'] = 1;
+        }
+
         if(!$request->has('amount')) {
             $data['amount'] = $plan_data->amount;
         }

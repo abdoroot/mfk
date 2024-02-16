@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Yajra\DataTables\DataTables;
 use Illuminate\Http\Request;
-use App\Models\Booking;
+use App\Models\User;
 use App\Models\Coupon;
 use App\Models\Service;
 use App\Models\Payment;
@@ -120,6 +120,96 @@ class UserSubscriptionOrderController extends Controller
 
     public function show($id)
     {
-        return $id;
+      $auth_user = authSession();
+
+         $user = auth()->user();
+         $user->last_notification_seen = now();
+         $user->save();
+
+         if(count($user->unreadNotifications) > 0 ) {
+
+           foreach($user->unreadNotifications as $notifications){
+
+              if($notifications['data']['id'] == $id){
+
+                 $notification = $user->unreadNotifications->where('id', $notifications['id'])->first();
+                if($notification){
+                     $notification->markAsRead();
+                       }
+                  }
+        
+             }
+                  
+        }
+
+        $orderdata = UserSubscriptionOrder::myOrder()->find($id);
+        $tabpage = 'info';
+        if (empty($orderdata)) {
+            $msg = __('messages.not_found_entry', ['name' => __('messages.usersubscriptionorder')]);
+            return redirect(route('usersubscriptionorder.index'))->withError($msg);
+        }
+        if (count($auth_user->unreadNotifications) > 0) {
+            $auth_user->unreadNotifications->where('data.id', $id)->markAsRead();
+        }
+
+        $pageTitle = __('messages.view_form_title', ['form' => __('messages.usersubscriptionorder')]);
+        return view('usersubscriptionorder.view', compact('pageTitle', 'orderdata', 'auth_user', 'tabpage'));
     }
+
+    public function orderStatus(Request $request, $id)
+    {
+        $tabpage = $request->tabpage;
+        $auth_user = authSession();
+        $user_id = $auth_user->id;
+        $user_data = User::find($user_id);
+        $orderdata = UserSubscriptionOrder::with('payment')->myOrder()->find($id);
+        switch ($tabpage) {
+            case 'info':
+                $data  = view('usersubscriptionorder.' . $tabpage, compact('user_data', 'tabpage', 'auth_user', 'orderdata'))->render();
+                break;
+            case 'status':
+                $data  = view('usersubscriptionorder.' . $tabpage, compact('user_data', 'tabpage', 'auth_user', 'orderdata'))->render();
+                break;
+            default:
+                $data  = view('usersubscriptionorder.' . $tabpage, compact('tabpage', 'auth_user', 'orderdata'))->render();
+                break;
+        }
+        return response()->json($data); 
+    }
+
+  
+    public function changeOrderStatusForm(Request $request) {
+        $orderdata = UserSubscriptionOrder::myOrder()->find($request->id);
+        $orderStatus = getOrdersStatus();
+        $pageTitle = __('messages.assign_form_title',['form'=> __('messages.usersubscriptionorder')]);
+        return view('usersubscriptionorder.change_order_status_form',compact('orderStatus','pageTitle','orderdata'));
+    }
+
+    public function changeOrderStatus(Request $request) {
+        $id = $request->id;
+        $status = $request->status;
+        $orderdata = UserSubscriptionOrder::myOrder()->find($id);
+        $resp = UserSubscriptionOrder::myOrder()->where("id",$id)->update([
+            "status" => $status,
+        ]);
+
+        $customer_name = $orderdata->customer->display_name;
+        $notification_data = [
+            'id' => $orderdata->id,
+            'type' => 'update_user_subscription_order_status',
+            'subject' => 'user_subscription_order_status',
+            'message' => __('messages.user_subscription_order_status_changed', ['name' => $customer_name]),
+            "ios_badgeType" => "Increase",
+            "ios_badgeCount" => 1,
+            "notification-type" => 'user_subscription_order_status'
+        ];
+
+        $user = $user = \App\Models\User::getUserByKeyValue('id', $orderdata->customer_id);
+        sendNotification('user', $user, $notification_data);
+
+        $message = __('messages.save_form',[ 'form' => __('messages.order_status') ] );
+        return response()->json(['status' => true,'event' => 'callback' , 'message' => $message]);
+    }
+
+    
 }

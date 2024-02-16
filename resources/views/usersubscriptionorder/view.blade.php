@@ -4,10 +4,7 @@
         <div class="col-lg-12">
             <ul class="nav nav-tabs nav-fill tabslink payment-view-tabs" id="tab-text" role="tablist">
                 <li class="nav-item payment-link">
-                    <a href="javascript:void(0)" data-href="{{ route('booking_layout_page',$bookingdata->id) }}?tabpage=info" data-target=".payment_paste_here" data-toggle="tabajax" class="nav-link  {{$tabpage=='info'?'active':''}}" rel="tooltip"> {{ __('messages.info') }}</a>
-                </li>
-                <li class="nav-item payment-link">
-                    <a href="javascript:void(0)" data-href="{{ route('booking_layout_page',$bookingdata->id) }}?tabpage=status" data-target=".payment_paste_here" data-toggle="tabajax" class="nav-link  {{$tabpage=='status'?'active':''}}" rel="tooltip"> {{__('messages.status')}}</a>
+                    <a href="javascript:void(0)" data-href="{{ route('booking_layout_page',$orderdata->id) }}?tabpage=info" data-target=".payment_paste_here" data-toggle="tabajax" class="nav-link  {{$tabpage=='info'?'active':''}}" rel="tooltip"> {{ __('messages.info') }}</a>
                 </li>
             </ul>
             <div class="card">
@@ -26,7 +23,7 @@
     <script>
         $(document).ready(function(event) {
             var $this = $('.payment-link').find('a.active');
-            loadurl = "{{route('booking_layout_page',$bookingdata->id)}}?tabpage={{$tabpage}}";
+            loadurl = "{{route('user_subscriptions_layout_page',$orderdata->id)}}?tabpage={{$tabpage}}";
             targ = $this.attr('data-target');
             
             id = this.id || '';

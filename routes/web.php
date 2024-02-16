@@ -417,6 +417,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('user-subscriptions', [UserSubscriptionOrderController::class, 'index'])->name('user-subscriptions.index');
         Route::get('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'show'])->name('user-subscriptions.show');
         Route::get('user-subscriptions-index-data', [UserSubscriptionOrderController::class, 'index_data'])->name('user-subscriptions.index_data');
+        Route::post('user-subscriptions-layout-page/{id}', [UserSubscriptionOrderController::class, 'orderStatus'])->name('user_subscriptions_layout_page');
+        Route::get('user-subscriptions-change-order-status-form/{id}', [UserSubscriptionOrderController::class, 'changeOrderStatusForm'])->name('user-subscriptions.change_order_status_form');
+        Route::post('user-subscriptions-change-order-status', [UserSubscriptionOrderController::class, 'changeOrderStatus'])->name('user-subscriptions.change_order_status');
+
+
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');

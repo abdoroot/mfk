@@ -21,6 +21,8 @@
                 <li class="dropdown-item-1 float-none p-3 {{ $notification->read_at ? '':'notify-list-bg'}} ">
                 @if($notification->data['type'] == 'add_user_subscription_order')
                   <a href="{{ route('user-subscriptions.show', $notification->data['id']) }}" class=""> 
+                @else if($notification->data['type'] == 'update_user_subscription_order_status')
+                <a href="{{ route('user-subscriptions.show', $notification->data['id']) }}" class=""> 
                 @else
                 <a href="{{ route('booking.show', $notification->data['id']) }}" class="">
                 @endif

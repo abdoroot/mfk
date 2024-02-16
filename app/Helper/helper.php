@@ -1,6 +1,19 @@
 <?php
 use \Illuminate\Support\Facades\File;
 
+function getOrdersStatus()
+{
+    $ordersStatus = [
+        "accept" => __('messages.accepted'),
+        "completed" => __('messages.completed'),
+        "waiting" => __('messages.waiting'),
+        "cancelled" => __('messages.status_cancelled'),
+        "rejected" => __('messages.rejected'),
+    ];  
+
+    return $ordersStatus;
+} 
+
 function authSession($force = false)
 {
     $session = new \App\Models\User;
