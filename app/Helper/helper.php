@@ -1213,8 +1213,16 @@ function get_plan_expiration_date($plan_start_date = '', $plan_type = '', $left_
     if ($plan_type === 'yearly') {
         $end_date = $start_at->addYears($plan_duration)->addDays($left_days);
     }
+    if ($plan_type === '3_months') {
+        $end_date = $start_at->addMonths(3)->addDays($left_days);
+    }
+    if ($plan_type === '6_months') {
+        $end_date = $start_at->addMonths(6)->addDays($left_days);
+    }
+
     return $end_date->format('Y-m-d H:i:s');
 }
+
 
 function get_user_active_plan($user_id)
 {

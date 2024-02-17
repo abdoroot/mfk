@@ -11,10 +11,11 @@ use App\Models\Wallet;
 use App\Models\AppSetting;
 use App\Models\PaymentHistory;
 use App\Models\UserSubscriptionOrder;
+use App\Models\UserSubscriptionPlan;
 use App\Http\Resources\API\PaymentResource;
 use App\Http\Resources\API\PaymentHistoryResource;
 use App\Http\Resources\API\GetCashPaymentHistoryResource;
-use Braintree;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -76,6 +77,9 @@ class PaymentController extends Controller
         
         $subscriptionOrder->payment_id = $result->id;
         $subscriptionOrder->status = "completed";
+        $now = Carbon::now();
+        $subscriptionOrder->start_at = $now;
+        $subscriptionOrder->end_at = get_plan_expiration_date($now,$subscriptionOrder->plan->plan_type);
         $subscriptionOrder->update();
         
         $status_code = 200;
