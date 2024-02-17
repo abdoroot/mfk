@@ -10,6 +10,7 @@ use App\Models\BookingHandymanMapping;
 use App\Models\Wallet;
 use App\Models\AppSetting;
 use App\Models\PaymentHistory;
+use App\Models\UserSubscriptionOrder;
 use App\Http\Resources\API\PaymentResource;
 use App\Http\Resources\API\PaymentHistoryResource;
 use App\Http\Resources\API\GetCashPaymentHistoryResource;
@@ -64,6 +65,62 @@ class PaymentController extends Controller
             $status_code = 400;
         }
         return comman_message_response($message,$status_code);
+    }
+
+    public function UserSubscriptionSavePayment(Request $request)
+    {
+        $data = $request->all();
+        $data['datetime'] = isset($request->datetime) ? date('Y-m-d H:i:s', strtotime($request->datetime)) : date('Y-m-d H:i:s');
+        $result = Payment::create($data);
+        $subscriptionOrder = UserSubscriptionOrder::find($request->subscription_id);
+        
+        $subscriptionOrder->payment_id = $result->id;
+        $subscriptionOrder->status = "completed";
+        $subscriptionOrder->update();
+        
+        $status_code = 200;
+        
+        if ($request->payment_type == 'wallet') {
+            $wallet = Wallet::where('user_id', $subscriptionOrder->customer_id)->first();
+
+            if ($wallet !== null) {
+                $wallet_amount = $wallet->amount;
+
+                if ($wallet_amount >= $request->total_amount) {
+                    $wallet->amount = $wallet->amount - $request->total_amount;
+                    $wallet->update();
+
+                    $activity_data = [
+                        'activity_type' => 'paid_for_subscription',
+                        'wallet' => $wallet,
+                        'subscription_order_id' => $request->subscription_id,
+                        'order_amount' => $request->total_amount,
+                    ];
+
+                    saveWalletHistory($activity_data);
+                } else {
+                    $message = __('messages.wallent_balance_error');
+                }
+            }
+        }
+
+        $message = __('messages.payment_completed');
+
+        $activity_data = [
+            'activity_type' => 'payment_message_status',
+            'activity_message' => 'payment_message_status',
+            'payment_status' => str_replace("_", " ", ucfirst($data['payment_status'])),
+            'subscription_order_id' => $subscriptionOrder->id,
+            'subscription_order' => $subscriptionOrder,
+        ];
+
+        saveSubscriptionOrderActivity($activity_data);
+
+        if ($result->payment_status == 'failed') {
+            $status_code = 400;
+        }
+
+        return comman_message_response($message, $status_code);
     }
 
     public function paymentList(Request $request)

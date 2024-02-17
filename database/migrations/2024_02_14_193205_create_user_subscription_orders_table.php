@@ -28,7 +28,7 @@ class CreateUserSubscriptionOrdersTable extends Migration
             $table->text('description')->nullable();
             $table->string('status')->nullable();
             $table->text('address')->nullable();
-            $table->json('payment_id')->nullable();
+            $table->unsignedBigInteger('payment_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
