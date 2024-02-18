@@ -249,9 +249,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        if (demoUserPermission()) {
-            return redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
-        }
         $category = Category::find($id);
 
         $msg = __('messages.msg_fail_to_delete', ['name' => __('messages.category')]);

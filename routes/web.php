@@ -44,6 +44,7 @@ use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
 use App\Http\Controllers\UserSubscriptionPlanController;
 use App\Http\Controllers\UserSubscriptionOrderController;
+use App\Http\Controllers\MyHomeController;
 
 
 
@@ -420,7 +421,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('user-subscriptions-layout-page/{id}', [UserSubscriptionOrderController::class, 'orderStatus'])->name('user_subscriptions_layout_page');
         Route::get('user-subscriptions-change-order-status-form/{id}', [UserSubscriptionOrderController::class, 'changeOrderStatusForm'])->name('user-subscriptions.change_order_status_form');
         Route::post('user-subscriptions-change-order-status', [UserSubscriptionOrderController::class, 'changeOrderStatus'])->name('user-subscriptions.change_order_status');
-
+        
+        Route::resource('my-home',MyHomeController::class);
+        Route::get('my-home-index-data', [MyHomeController::class, 'index_data'])->name('my-home.index_data');
+        Route::post('my-home-bulk-action', [MyHomeController::class, 'bulk_action'])->name('my-home.bulk-action');
+        Route::post('my-home-action', [MyHomeController::class, 'action'])->name('my-home.action');
 
     });
 });

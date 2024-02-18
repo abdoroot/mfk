@@ -62,7 +62,7 @@ class UserSubscriptionPlanController extends Controller
 
             ->editColumn('category', function($query){                
                $category = Category::find($query->category_id);
-                return $category->name;
+                return $category->name ?? '-';
             })
 
 

@@ -14,7 +14,7 @@ class UserSubscriptionPlan extends Model
 
 
     protected $fillable = [
-        'provider_id','title', 'amount','status','description','plan_type','category_id','subcategory_id'
+        'provider_id','my_home_id','title', 'amount','status','description','plan_type','category_id','subcategory_id'
     ];
 
     protected $casts = [

@@ -16,9 +16,10 @@ class CreateUserSubscriptionsTable extends Migration
         Schema::create('user_subscriptions_plans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('provider_id');
+            $table->unsignedBigInteger('my_home_id')->nullable();
             $table->json('title');
             $table->tinyInteger('status')->nullable()->default('0');
-            $table->unsignedBigInteger('category_id')->notnull();
+            $table->unsignedBigInteger('category_id')->nullable();
             $table->unsignedBigInteger('subcategory_id')->nullable();
             $table->decimal('amount', 8, 2);
             $table->string('plan_type')->nullable();
