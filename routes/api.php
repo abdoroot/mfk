@@ -57,6 +57,13 @@ Route::post('handyman-reviews',[API\User\UserController::class, 'handymanReviews
 Route::post('service-reviews', [ API\ServiceController::class, 'serviceReviewsList' ] );
 Route::get('post-job-status', [ API\PostJobRequestController::class, 'postRequestStatus' ] );
 
+
+Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::class, 'subscriptionPlanList' ] );
+Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
+Route::get('store-category-list',[API\StoreCategoryController::class,'getCategoryList']);
+Route::get('store-subcategory-list',[API\StoreSubCategoryController::class,'getSubCategoryList']);
+// Route::get('service-list',[API\ServiceController::class,'getServiceList']);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     //Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
@@ -160,9 +167,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user-wallet-balance',[API\User\UserController::class,'userWalletBalance']);
     Route::get('configurations', [ API\DashboardController::class, "configurations"]);
 
-    Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::class, 'subscriptionPlanList' ] );
-    Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
+    
     Route::post('user-subscription-order', [API\UserSubscriptionOrderController::class, 'store' ] );
-
     Route::post('user-subscription-order-save-payment',[API\PaymentController::class, 'UserSubscriptionSavePayment']);
 });
