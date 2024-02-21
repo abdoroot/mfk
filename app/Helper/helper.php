@@ -113,6 +113,7 @@ function getSingleMedia($model, $collection = 'profile_image', $skip = true)
         $media = $model->getFirstMedia($collection);
     }
 
+
     if (getFileExistsCheck($media)) {
         return $media->getFullUrl();
     } else {

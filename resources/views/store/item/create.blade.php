@@ -102,10 +102,10 @@
                             <div class="col-md-12">
 
 
-                                @if(getMediaFileExit($storeItemData, 'service_attachment'))
+                                @if(getMediaFileExit($storeItemData, 'store_item_attachment'))
                                 @php
 
-                                $attchments = $storeItemData->getMedia('service_attachment');
+                                $attchments = $storeItemData->getMedia('store_item_attachment');
 
                                 $file_extention = config('constant.IMAGE_EXTENTIONS');
                                 @endphp

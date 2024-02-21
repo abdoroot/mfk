@@ -62,7 +62,7 @@ Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::
 Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
 Route::get('store-category-list',[API\StoreCategoryController::class,'getCategoryList']);
 Route::get('store-subcategory-list',[API\StoreSubCategoryController::class,'getSubCategoryList']);
-// Route::get('service-list',[API\ServiceController::class,'getServiceList']);
+Route::get('store-item-list',[API\StoreItemController::class,'getItemList']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
