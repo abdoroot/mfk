@@ -543,7 +543,7 @@ function getPriceFormat($price)
     $currency_symbol = \App\Models\Setting::where('type', 'CURRENCY')->where('key', 'CURRENCY_COUNTRY_ID')->with('country')->first();
     // print_r($currency_symbol);
     // exit;
-    $symbol = '$';
+    $symbol = 'AED';
     if (!empty($currency_symbol)) {
         $symbol = $currency_symbol->country->symbol;
     }

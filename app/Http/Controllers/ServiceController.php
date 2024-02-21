@@ -50,7 +50,6 @@ class ServiceController extends Controller
 
         return $datatable->eloquent($query)
             ->addColumn('check', function ($row) {
-
                 return '<input type="checkbox" class="form-check-input select-table-row"  id="datatable-row-'.$row->id.'"  name="datatable_ids[]" value="'.$row->id.'" data-type="service" onclick="dataTableRowCheck('.$row->id.',this)">';
             })
         
@@ -194,12 +193,9 @@ class ServiceController extends Controller
      */
     public function store(ServiceRequest $request)
     {
-        if(demoUserPermission()){
-            return  redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
-        }
-       
+
         $services = $request->all();
-        
+    
         $services['service_type'] = !empty($request->service_type) ? $request->service_type : 'service';
         $services['provider_id'] = !empty($request->provider_id) ? $request->provider_id : auth()->user()->id;
         if(auth()->user()->hasRole('user')){
@@ -364,12 +360,6 @@ class ServiceController extends Controller
      */
     public function destroy($id)
     {
-        if(demoUserPermission()){
-            if(request()->is('api/*')){
-                return comman_message_response( __('messages.demo_permission_denied') );
-            }
-            return  redirect()->back()->withErrors(trans('messages.demo_permission_denied'));
-        }
         $service = Service::find($id);
         $msg= __('messages.msg_fail_to_delete',['item' => __('messages.service')] );
         

@@ -44,6 +44,7 @@ use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
 use App\Http\Controllers\UserSubscriptionPlanController;
 use App\Http\Controllers\UserSubscriptionOrderController;
+use App\Http\Controllers\StoreItemController;
 use App\Http\Controllers\MyHomeController;
 
 
@@ -427,6 +428,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('my-home-bulk-action', [MyHomeController::class, 'bulk_action'])->name('my-home.bulk-action');
         Route::post('my-home-action', [MyHomeController::class, 'action'])->name('my-home.action');
 
+
+        Route::resource('store-item', StoreItemController::class);
+        Route::get('store-item-index-data', [StoreItemController::class, 'index_data'])->name('store.item.index-data');
+        Route::post('store-item-bulk-action', [StoreItemController::class, 'bulk_action'])->name('store-item.bulk-action');
+        Route::post('store-item/{id}', [StoreItemController::class, 'destroy'])->name('store-item.destroy');
+        Route::post('store-item-action', [StoreItemController::class, 'action'])->name('store-item.action');
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');
