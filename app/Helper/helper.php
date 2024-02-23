@@ -295,7 +295,7 @@ function saveSubscriptionOrderActivity($data)
                 'payment_status' => $data['payment_status'],
                 'subscription_order_id' => $data['subscription_order_id'],
             ];
-            $sendTo = ['admin', 'provider','user'];
+            $sendTo = ['admin', 'provider', 'user'];
             break;
         default:
             $activity_data = [];
@@ -324,11 +324,64 @@ function saveSubscriptionOrderActivity($data)
                 $user = User::getUserByKeyValue('id', $data['subscription_order']->provider_id);
                 break;
             case 'user':
-                    $user = \App\Models\User::getUserByKeyValue('id', $data['subscription_order']->customer_id);
-                    break;    
+                $user = \App\Models\User::getUserByKeyValue('id', $data['subscription_order']->customer_id);
+                break;
         }
 
         sendNotification($to, $user, $notification_data);
+    }
+}
+
+
+function saveStoreOrderActivity($data)
+{
+    $admin = \App\Models\AppSetting::first();
+    date_default_timezone_set($admin->time_zone ?? 'UTC');
+    $data['datetime'] = date('Y-m-d H:i:s');
+    $role = auth()->user()->user_type;
+
+    switch ($data['activity_type']) {
+        case "add_store_order":
+            $customer_name = $data['order']->customer->display_name;
+            $data['activity_message'] = __('messages.order_added', ['name' => $customer_name]);
+            $sendTo = ['providers','admin'];
+            break;
+    }
+
+    $notification_data = [
+        'id' => $data['order']->id,
+        'type' => $data['activity_type'],
+        'subject' => $data['activity_type'],
+        'message' => $data['activity_message'],
+        "ios_badgeType" => "Increase",
+        "ios_badgeCount" => 1,
+        "notification-type" => 'store_order'
+    ];
+    foreach ($sendTo as $to) {
+        switch ($to) {
+            case 'admin':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'admin');
+                break;
+            case 'providers':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'provider'); //get all providers
+                break;
+            case 'provider':
+                $user = \App\Models\User::getUserByKeyValue('id', $data['order']->provider_id);
+                break;                
+            case 'handyman':
+                $handymans = $data['order']->handymanAdded->pluck('handyman_id');
+                foreach ($handymans as $id) {
+                    $user = \App\Models\User::getUserByKeyValue('id', $id);
+                    sendNotification('provider', $user, $notification_data);
+                }
+                break;
+            case 'user':
+                $user = \App\Models\User::getUserByKeyValue('id', $data['order']->customer_id);
+                break;
+        }
+        if ($to != 'handyman') {
+            sendNotification($to, $user, $notification_data);
+        }
     }
 }
 

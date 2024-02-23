@@ -64,7 +64,9 @@ Route::get('store-category-list',[API\StoreCategoryController::class,'getCategor
 Route::get('store-subcategory-list',[API\StoreSubCategoryController::class,'getSubCategoryList']);
 Route::get('store-item-list',[API\StoreItemController::class,'getItemList']);
 
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('store-item-order',[API\StoreOrderController::class,'store']);
     Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     //Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     Route::post('service-delete/{id}', [ App\Http\Controllers\ServiceController::class, 'destroy' ] );

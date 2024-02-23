@@ -7,6 +7,7 @@ use App\Models\AppSetting;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\Country;
+use App\Models\ProviderSlotMapping;
 use App\Models\Service;
 use Session;
 use Config;
