@@ -25,6 +25,8 @@
                     || $notification->data['notification-type'] == 'user_subscription_order'
                     )
                   <a href="{{ route('user-subscriptions.show', $notification->data['id']) }}" class=""> 
+                @elseif($notification->data['type'] == 'add_store_order')
+                <a href="{{ route('store-order.show', $notification->data['id']) }}" class="">
                 @else
                 <a href="{{ route('booking.show', $notification->data['id']) }}" class="">
                 @endif

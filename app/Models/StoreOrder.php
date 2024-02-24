@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StoreOrder extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'store_orders';
 
@@ -52,5 +52,26 @@ class StoreOrder extends Model
     public function payment()
     {
         return $this->belongsTo(Payment::class, 'payment_id');
+    }
+
+    public function getFormattedItemsAttribute()
+    {
+        $items = [];
+
+        if (!is_null($this->items)) {
+            foreach ($this->items as $item) {
+                $data = StoreItem::find($item['id']);
+                $itemName = $data->name ?? 'Unknown';
+                $tempItem = [
+                    "id" => $item['id'],
+                    "name" => $itemName,
+                    "price" => $item['price'],
+                    "amount" => $data->price,
+                    "quantity" => $item['quantity']
+                ];
+                array_push($items,$tempItem);
+            }
+        }
+        return $items;
     }
 }

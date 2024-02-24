@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->unsignedBigInteger('booking_id')->nullable()->default(null);
             $table->unsignedBigInteger('subscription_id')->nullable()->default(null);
+            $table->unsignedBigInteger('store_order_id')->nullable()->default(null);
             $table->dateTime('datetime')->nullable()->default(null);
             $table->double('discount')->nullable()->default('0');
             $table->double('total_amount')->nullable()->default('0');

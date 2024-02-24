@@ -672,6 +672,12 @@
     'user_subscriptions_plans' => 'Users Plans',
     'order_date' => 'Order Date',
     'subscriptions' => 'Subscriptions',
-
+    'my_home' => 'My home',
+    'myhome' => 'My home',
+    'new' => 'New',
+    'usersubscriptionsplan' => 'users ubscriptions plan',
+    'list' => 'list',
+    'order' => 'order',
+    'store_item' => 'store item',
 )
     ?>

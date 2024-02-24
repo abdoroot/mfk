@@ -35,6 +35,7 @@ class StoreOrderController extends Controller
         }
 
         $data = $request->all();
+        $data['status'] = 'pending';
         $data['customer_id'] = auth()->user()->id;
 
         //create order

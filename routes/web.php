@@ -45,6 +45,7 @@ use App\Http\Controllers\StoreSubCategoryController;
 use App\Http\Controllers\UserSubscriptionPlanController;
 use App\Http\Controllers\UserSubscriptionOrderController;
 use App\Http\Controllers\StoreItemController;
+use App\Http\Controllers\StoreOrderController;
 use App\Http\Controllers\MyHomeController;
 
 
@@ -434,6 +435,16 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('store-item-bulk-action', [StoreItemController::class, 'bulk_action'])->name('store-item.bulk-action');
         Route::post('store-item/{id}', [StoreItemController::class, 'destroy'])->name('store-item.destroy');
         Route::post('store-item-action', [StoreItemController::class, 'action'])->name('store-item.action');
+       
+        Route::get('store-order', [StoreOrderController::class, 'index'])->name('store-order.index');
+        Route::post('store-order-bulk-action', [StoreOrderController::class, 'bulk_action'])->name('store-order.bulk-action');
+        Route::get('store-order/{id}', [StoreOrderController::class, 'show'])->name('store-order.show');
+        Route::delete('store-order-destroy/{id}', [StoreOrderController::class, 'destroy'])->name('store-order.destroy');
+        Route::get('store-order-index-data', [StoreOrderController::class, 'index_data'])->name('store-order.index-data');
+        Route::post('store-order-action', [StoreOrderController::class, 'action'])->name('store-order.action');
+        Route::post('store-order-layout-page/{id}', [StoreOrderController::class, 'orderStatus'])->name('store_order_layout_page');
+        Route::get('store-order-change-order-status-form/{id}', [StoreOrderController::class, 'changeOrderStatusForm'])->name('store-order.change_order_status_form');
+        Route::post('store-order-change-order-status', [StoreOrderController::class, 'changeOrderStatus'])->name('store-order.change_order_status');
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');

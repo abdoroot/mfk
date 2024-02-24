@@ -9,6 +9,7 @@ function getOrdersStatus()
         "completed" => __('messages.completed'),
         "waiting" => __('messages.waiting'),
         "cancelled" => __('messages.status_cancelled'),
+        "shipped" => __('messages.shipped'),
         "rejected" => __('messages.rejected'),
     ];
 
@@ -346,6 +347,11 @@ function saveStoreOrderActivity($data)
             $data['activity_message'] = __('messages.order_added', ['name' => $customer_name]);
             $sendTo = ['providers','admin'];
             break;
+        case "payment_message_status":
+            $customer_name = $data['order']->customer->display_name;
+            $data['activity_message'] = __('messages.payment_message_status', ['name' => $customer_name]);
+            $sendTo = ['providers','admin'];
+            break;            
     }
 
     $notification_data = [
