@@ -21,7 +21,7 @@ class StoreOrderController extends Controller
             'discount' => 'required|numeric',
             'total_amount' => 'required|numeric',
             'shipping_address' => 'required|string',
-            'payment_type' => 'required|string|in:cash_on_delivery,stripe',
+            'payment_type' => 'required|string|in:cash,stripe',
         ]);
         
         if ($validator->fails()) {
