@@ -445,6 +445,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('store-order-layout-page/{id}', [StoreOrderController::class, 'orderStatus'])->name('store_order_layout_page');
         Route::get('store-order-change-order-status-form/{id}', [StoreOrderController::class, 'changeOrderStatusForm'])->name('store-order.change_order_status_form');
         Route::post('store-order-change-order-status', [StoreOrderController::class, 'changeOrderStatus'])->name('store-order.change_order_status');
+        Route::get('store-order/invoice_pdf/{id}', [StoreOrderController::class, 'createPDF'])->name('store-order.invoice_pdf');
+
     });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');

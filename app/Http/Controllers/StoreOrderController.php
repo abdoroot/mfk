@@ -7,6 +7,8 @@ use App\Models\BookingStatus;
 use App\Models\StoreOrder;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\AppSetting;
+use PDF; 
 
 class StoreOrderController extends Controller
 {
@@ -243,4 +245,12 @@ class StoreOrderController extends Controller
    
            return response()->json(['status' => true, 'message' => 'Bulk Action Updated']);
        }
+
+    public function createPDF($id)
+    {
+        $data =AppSetting::take(1)->first();
+        $orderdata = StoreOrder::with('payment')->find($id);
+        $pdf = Pdf::loadView('store.order.invoice',['orderdata'=>$orderdata ,'data'=> $data]);
+        return $pdf->download('invoice.pdf');
+    }
 }

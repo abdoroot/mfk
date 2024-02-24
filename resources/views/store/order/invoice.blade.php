@@ -479,9 +479,9 @@
                             <div class="col-sm-6">
                                 <div class="text-muted">
                                     <h5 class="font-size-16 mb-3">{{__('messages.Billed_To')}}:</h5>
-                                    <h5 class="c1 mb-3">{{optional($bookingdata->customer)->display_name ?? '-'}}</h5>
-                                    <p class="mb-0">{{ optional($bookingdata->customer)->contact_number ?? '-' }}</p>
-                                    <p class="mb-1">{{optional($bookingdata->customer)->email ?? '-' }}</p>
+                                    <h5 class="c1 mb-3">{{optional($orderdata->customer)->display_name ?? '-'}}</h5>
+                                    <p class="mb-0">{{ optional($orderdata->customer)->contact_number ?? '-' }}</p>
+                                    <p class="mb-1">{{optional($orderdata->customer)->email ?? '-' }}</p>
                                 </div>
                             </div>
                             <!-- end col -->
@@ -489,7 +489,7 @@
                                 <div class="text-muted text-sm-end">
                                     <div>
                                         <h5 class="font-size-15 mb-1">{{__('messages.Invoice_No')}}:</h5>
-                                        <p>{{ '#' . $bookingdata->id ?? '-'}}</p>
+                                        <p>{{ '#' . $orderdata->id ?? '-'}}</p>
                                         
                                     </div>
                                     
@@ -511,16 +511,12 @@
                                 <tr align="center">
                                     <td class="no">1</td>
                                     <td class="text-wrap ps-lg-3">
-                                    {{optional($bookingdata->service)->name ?? '-'}}   
+                                    {{optional($orderdata->service)->name ?? '-'}}   
                                     </td>
-                                    <td>{{ isset($bookingdata->amount) ? getPriceFormat($bookingdata->amount) : 0 }}</td> 
-                                    <td>{{!empty($bookingdata->quantity) ? $bookingdata->quantity : 0}}</td>
+                                    <td>{{ isset($orderdata->amount) ? getPriceFormat($orderdata->amount) : 0 }}</td> 
+                                    <td>{{!empty($orderdata->quantity) ? $orderdata->quantity : 0}}</td>
                                     @php
-                                        if($bookingdata->service->type === 'fixed'){
-                                        $sub_total = ($bookingdata->amount) * ($bookingdata->quantity);
-                                        }else{
-                                        $sub_total = $bookingdata->amount;
-                                         }
+                                    $sub_total = $orderdata->amount;
                                      @endphp
                                    <td class="text-end">{{!empty($sub_total) ? getPriceFormat($sub_total) : 0}}</td>
                                 </tr>
@@ -538,53 +534,35 @@
                                                 <p>{{__('messages.Total_Payable')}}</p>
                                             </div> 
                                             <div class="total-right w-15 float-left text-bold" align="right">
-                                                <p>{{!empty($bookingdata->discount) ? $bookingdata->discount : 0}}%</p>
+                                                <p>{{!empty($orderdata->discount) ? $orderdata->discount : 0}}%</p>
                                                 @php
                                                 $discount = '';
-                                                if($bookingdata->couponAdded != null){
-                                                    $discount = optional($bookingdata->couponAdded)->discount ?? '-';
-                                                    $discount_type = optional($bookingdata->couponAdded)->discount_type ?? 'fixed';
+                                                if($orderdata->couponAdded != null){
+                                                    $discount = optional($orderdata->couponAdded)->discount ?? '-';
+                                                    $discount_type = optional($orderdata->couponAdded)->discount_type ?? 'fixed';
                                                     $discount = (float)$discount;
                                                     if($discount_type == 'percentage'){
                                                         $discount = $discount .'%';
                                                     }
                                                 }
                                                 @endphp
-                                                <p>{{ optional($bookingdata->couponAdded)->code ?? '-' }} {{ $discount }}</p>
+                                                <p>{{ optional($orderdata->couponAdded)->code ?? '-' }} {{ $discount }}</p>
                                                 @php
-                                                if($bookingdata->tax != ""){
-                                                    foreach(json_decode($bookingdata->tax) as $key => $value){
-                                                    if($value->type === 'percent'){
-                                                        $tax = $value->value;
-                                                        $tax_per = $sub_total * $tax / 100;
-                                                    }else{
-                                                        $tax_fix = $value->value;
-                                                    }
-                                                }
-                                                 $tax_amount = $tax_per ?? 0 + $tax_fix ?? 0;
-                                                }else{
-                                                    $tax_amount =0;
-                                                }
+                                            
+                                                $tax_amount = $orderdata->tax
                                             
                                                 @endphp
                                                 <p>{{!empty($tax_amount) ? getPriceFormat($tax_amount) : 0}}</p>
                                                 @php
-                                                $sub_total = $bookingdata->amount + $tax_amount;
+                                                $sub_total = $orderdata->amount + $tax_amount;
                                                  @endphp
                                                 <p>{{!empty($sub_total) ? getPriceFormat($sub_total) : 0}}</p>
                                                 @php
                                                 
                                                     $coupon_discount = $sub_total * (float)$discount / 100;
-                                                    $discount = $sub_total * $bookingdata->discount / 100;
+                                                    $discount = $sub_total * $orderdata->discount / 100;
                                                     $total_amount = $sub_total - ($coupon_discount + $discount);
                                                 @endphp
-
-                                                @foreach($bookingdata->bookingExtraCharge as $chrage)
-                                                        @php
-                                                            $extraValue += $chrage->price * $chrage->qty;
-                                                        @endphp
-                                                @endforeach
-                                                <p>{{!empty($extraValue) ? getPriceFormat($extraValue) : 0}}</p>
                                                 <p>{{!empty($total_amount) ? getPriceFormat($total_amount + $extraValue) : 0}}</p>
                                             </div>
                                             <div style="clear: both;"></div>

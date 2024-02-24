@@ -15,13 +15,6 @@
                  {{ __('messages.change_status') }}</a>
                    
             </div>
-            @if($orderdata->payment_id !== null)
-            <a href="{{route('invoice_pdf',$orderdata->id)}}" class="btn btn-primary" target="_blank">
-                <i class="ri-file-text-line"></i>
-
-                {{__('messages.invoice')}}
-            </a>
-            @endif
         </div>
         </div>
     </div>
