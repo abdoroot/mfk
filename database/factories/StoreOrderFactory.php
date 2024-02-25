@@ -19,7 +19,7 @@ class StoreOrderFactory extends Factory
         $items = [];
         $total = 0;
         $tax = 0;
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < $this->faker->numberBetween(1, 10); $i++) {
             $pr = $this->faker->numberBetween(0, 300);
             $total += $pr;
             $item = [
@@ -34,6 +34,7 @@ class StoreOrderFactory extends Factory
 
         return [
             "customer_id" => 10,
+            'status' => 'pending',
             "items" => $items,
             "amount" => $total,
             "tax" => $tax,

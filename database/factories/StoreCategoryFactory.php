@@ -18,8 +18,8 @@ class StoreCategoryFactory extends Factory
     {
         return [
             'name' => [
-                'ar' => $this->faker->name,
-                'en' => $this->faker->name,
+                'ar' => $this->faker->word,
+                'en' => $this->faker->word,
             ],
             'status' => 1,
             'is_featured' => 0,

@@ -20,8 +20,9 @@ class UserSubscriptionOrderFactory extends Factory
         $tax = ($amount * 5) / 100;
         return [
             'provider_id' => 1,
-            'customer_id' => 20,
-            'plan_id' => 1,
+            'status' => 'pending',
+            'customer_id' => 10,
+            'plan_id' => $this->faker->numberBetween(1,10),
             'amount' => $amount,
             'tax' => $tax,
             'discount' => 0,

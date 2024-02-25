@@ -22,8 +22,8 @@ class UserSubscriptionPlanFactory extends Factory
     public function definition()
     {
         $title = [
-            'ar' => $this->faker->name,
-            'en' => $this->faker->name
+            'ar' => $this->faker->word,
+            'en' => $this->faker->word
         ];
 
         $description = [

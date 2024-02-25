@@ -19,8 +19,8 @@ class StoreItemFactory extends Factory
     {
         return [
             'name' => [
-                'ar' => $this->faker->name,
-                'en' => $this->faker->name,
+                'ar' => $this->faker->word,
+                'en' => $this->faker->word,
             ],
             'provider_id' => 1,
             'status' => 1,

@@ -18,8 +18,8 @@ class StoreSubCategoryFactory extends Factory
     {
         return [
             'name' => [
-                'ar' => $this->faker->name,
-                'en' => $this->faker->name,
+                'ar' => $this->faker->word,
+                'en' => $this->faker->word,
             ],
             'store_category_id' => $this->faker->numberBetween(1,10),
             'status' => 1,
