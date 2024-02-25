@@ -66,7 +66,7 @@ class StoreOrder extends Model
                     "id" => $item['id'],
                     "name" => $itemName,
                     "price" => $item['price'],
-                    "amount" => $data->price,
+                    "amount" => $item['price'],
                     "quantity" => $item['quantity']
                 ];
                 array_push($items,$tempItem);

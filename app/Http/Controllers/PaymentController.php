@@ -165,9 +165,13 @@ class PaymentController extends Controller
                 return '<input type="checkbox" class="form-check-input select-table-row"  id="datatable-row-'.$row->id.'"  name="datatable_ids[]" value="'.$row->id.'" onclick="dataTableRowCheck('.$row->id.')">';
             })
         ->editColumn('booking_id', function($query) {
-
-
-            return ($query->customer_id != null &&isset($query->booking->service)) ? $query->booking->service->name :'-';
+            if($query->subscription_id != null){
+                return $query->subscriptionOrder->plan->name ?? 'Unknow subscription plan';
+            }else if($query->store_order_id != null){
+                return (isset($query->StoreOrder->id)) ? "Order #".$query->StoreOrder->id:'Unknow Store Order';
+            }else{
+                return ($query->customer_id != null &&isset($query->booking->service)) ? $query->booking->service->name :'-';
+            }
         })
         ->filterColumn('booking_id',function($query,$keyword){
             $query->whereHas('booking.service',function ($q) use($keyword){

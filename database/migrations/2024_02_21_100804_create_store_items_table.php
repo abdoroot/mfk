@@ -26,8 +26,8 @@ class CreateStoreItemsTable extends Migration
             $table->tinyInteger('is_featured')->nullable()->default('0');
             $table->bigInteger('added_by')->nullable();
 
-            $table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('store_categories')->onDelete('cascade');
+            //$table->foreign('provider_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreign('category_id')->references('id')->on('store_categories')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

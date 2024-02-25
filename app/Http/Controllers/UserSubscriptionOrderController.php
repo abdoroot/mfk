@@ -54,7 +54,7 @@ class UserSubscriptionOrderController extends Controller
                 });
             })
             ->editColumn('service_id' , function ($query){
-                $plan_name = $query->plan()->first()->title;
+                $plan_name = $query->plan()->first()->title ?? '-';
                 //$plan_name = ($query->plan_id != null && isset($query->plan)) ? $query->plan->name : "pp";
                 return "<a class='btn-link btn-link-hover' href=" .route('user-subscriptions.show', $query->id).">".$plan_name ."</a>";
             })
