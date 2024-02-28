@@ -73,7 +73,7 @@ class PaymentController extends Controller
     {
         $data = $request->all();
         $data['datetime'] = isset($request->datetime) ? date('Y-m-d H:i:s', strtotime($request->datetime)) : date('Y-m-d H:i:s');
-        $data['subscription_id'] = $request->order_id;
+        $data['subscription_id'] = $request->subscription_id;
         $result = Payment::create($data);
         $subscriptionOrder = UserSubscriptionOrder::find($request->subscription_id);
         
