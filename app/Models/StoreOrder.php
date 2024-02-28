@@ -54,6 +54,18 @@ class StoreOrder extends Model
         return $this->belongsTo(Payment::class, 'payment_id');
     }
 
+    public function scopeMyOrder($query){
+        $user = auth()->user();
+        if($user->hasRole('admin') || $user->hasRole('demo_admin')) {
+            return $query;
+        }
+
+        if($user->hasRole('user')) {
+            return $query->where('customer_id', $user->id);
+        }
+        return $query;
+    }
+
     public function getFormattedItemsAttribute()
     {
         $items = [];
@@ -61,13 +73,14 @@ class StoreOrder extends Model
         if (!is_null($this->items)) {
             foreach ($this->items as $item) {
                 $data = StoreItem::find($item['id']);
-                $itemName = $data->name ?? 'Unknown';
+                $itemName = $data->name ?? __("messages.unknown");
                 $tempItem = [
                     "id" => $item['id'],
                     "name" => $itemName,
                     "price" => $item['price'],
                     "amount" => $item['price'],
-                    "quantity" => $item['quantity']
+                    "quantity" => $item['quantity'],
+                    'attachments' => getAttachments($data->getMedia('store_item_attachment')), 
                 ];
                 array_push($items,$tempItem);
             }

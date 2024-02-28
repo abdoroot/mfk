@@ -67,6 +67,7 @@ Route::get('store-item-list',[API\StoreItemController::class,'getItemList']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('store-item-order',[API\StoreOrderController::class,'store']);
+    Route::get('store-order-list', [ API\StoreOrderController::class, 'getOrderList' ] );
     Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     //Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     Route::post('service-delete/{id}', [ App\Http\Controllers\ServiceController::class, 'destroy' ] );

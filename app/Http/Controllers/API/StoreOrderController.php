@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\StoreOrder;
+use App\Http\Resources\API\OrderHistoryResource;
 
 class StoreOrderController extends Controller
 {
@@ -62,5 +63,51 @@ class StoreOrderController extends Controller
             'message' => $message,
         ];
     
+    }
+
+    public function getOrderList(Request $request){
+        $order = StoreOrder::myOrder()->with('customer');
+
+        if ($request->has('status') && isset($request->status)) {
+
+            $status = explode(',', $request->status); 
+            $order->whereIn('status', $status);
+           
+         }
+
+
+        $per_page = config('constant.PER_PAGE_LIMIT');
+        if( $request->has('per_page') && !empty($request->per_page)){
+            if(is_numeric($request->per_page)){
+                $per_page = $request->per_page;
+            }
+            if($request->per_page === 'all' ){
+                $per_page = $order->count();
+            }
+        }
+        $orderBy = 'desc';
+        if( $request->has('orderby') && !empty($request->orderby)){
+            $orderBy = $request->orderby;
+        }
+
+        $order = $order->orderBy('updated_at',$orderBy)->paginate($per_page);
+        //$items = BookingResource::collection($order);
+        $items = OrderHistoryResource::collection($order);
+
+        $response = [
+            'pagination' => [
+                'total_items' => $items->total(),
+                'per_page' => $items->perPage(),
+                'currentPage' => $items->currentPage(),
+                'totalPages' => $items->lastPage(),
+                'from' => $items->firstItem(),
+                'to' => $items->lastItem(),
+                'next_page' => $items->nextPageUrl(),
+                'previous_page' => $items->previousPageUrl(),
+            ],
+            'data' => $items,
+        ];
+        
+        return comman_custom_response($response);
     }
 }
