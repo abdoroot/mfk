@@ -19,8 +19,18 @@
         @if(isset($notifications) && count($notifications) > 0)
             @foreach($notifications->sortByDesc('created_at')->take(5) as $notification)
                 <li class="dropdown-item-1 float-none p-3 {{ $notification->read_at ? '':'notify-list-bg'}} ">
-                    <a href="{{ route('booking.show', $notification->data['id']) }}" class="">
-                    <div class="list-item d-flex justify-content-start align-items-start">
+                @if(
+                    $notification->data['type'] == 'add_user_subscription_order' 
+                    || $notification->data['type'] == 'update_user_subscription_order_status'
+                    || $notification->data['notification-type'] == 'user_subscription_order'
+                    )
+                  <a href="{{ route('user-subscriptions.show', $notification->data['id']) }}" class=""> 
+                @elseif($notification->data['type'] == 'add_store_order')
+                <a href="{{ route('store-order.show', $notification->data['id']) }}" class="">
+                @else
+                <a href="{{ route('booking.show', $notification->data['id']) }}" class="">
+                @endif
+                <div class="list-item d-flex justify-content-start align-items-start">
                         <div class="list-style-detail ml-2 mr-2">
                             <h6 class="font-weight-bold mb-1"># {{ $notification->data['id'] ." ". str_replace("_"," ",ucfirst($notification->data['type'])) }}</h6>
                             <p class="mb-1">

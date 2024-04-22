@@ -42,6 +42,11 @@ use App\Http\Controllers\ProviderSlotController;
 use App\Http\Controllers\ServiceAddonController;
 use App\Http\Controllers\StoreCategoryController;
 use App\Http\Controllers\StoreSubCategoryController;
+use App\Http\Controllers\UserSubscriptionPlanController;
+use App\Http\Controllers\UserSubscriptionOrderController;
+use App\Http\Controllers\StoreItemController;
+use App\Http\Controllers\StoreOrderController;
+use App\Http\Controllers\MyHomeController;
 
 
 
@@ -406,6 +411,43 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::post('serviceaddon-bulk-action', [ServiceAddonController::class, 'bulk_action'])->name('serviceaddon.bulk-action');
     });
 
+    Route::group(['middleware' => ['permission:category list']], function () {
+        Route::resource('user-subscriptions-plan', UserSubscriptionPlanController::class);
+        Route::get('user-subscriptions-data', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.index_data');
+        Route::delete('user-subscription/{id}', [UserSubscriptionPlanController::class, 'destroy'])->name('user-subscriptions-plan.destroy');
+        Route::post('user-subscriptions-bulk-action', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.bulk-action');
+
+        Route::get('user-subscriptions', [UserSubscriptionOrderController::class, 'index'])->name('user-subscriptions.index');
+        Route::get('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'show'])->name('user-subscriptions.show');
+        Route::get('user-subscriptions-index-data', [UserSubscriptionOrderController::class, 'index_data'])->name('user-subscriptions.index_data');
+        Route::post('user-subscriptions-layout-page/{id}', [UserSubscriptionOrderController::class, 'orderStatus'])->name('user_subscriptions_layout_page');
+        Route::get('user-subscriptions-change-order-status-form/{id}', [UserSubscriptionOrderController::class, 'changeOrderStatusForm'])->name('user-subscriptions.change_order_status_form');
+        Route::post('user-subscriptions-change-order-status', [UserSubscriptionOrderController::class, 'changeOrderStatus'])->name('user-subscriptions.change_order_status');
+        
+        Route::resource('my-home',MyHomeController::class);
+        Route::get('my-home-index-data', [MyHomeController::class, 'index_data'])->name('my-home.index_data');
+        Route::post('my-home-bulk-action', [MyHomeController::class, 'bulk_action'])->name('my-home.bulk-action');
+        Route::post('my-home-action', [MyHomeController::class, 'action'])->name('my-home.action');
+
+
+        Route::resource('store-item', StoreItemController::class);
+        Route::get('store-item-index-data', [StoreItemController::class, 'index_data'])->name('store.item.index-data');
+        Route::post('store-item-bulk-action', [StoreItemController::class, 'bulk_action'])->name('store-item.bulk-action');
+        Route::post('store-item/{id}', [StoreItemController::class, 'destroy'])->name('store-item.destroy');
+        Route::post('store-item-action', [StoreItemController::class, 'action'])->name('store-item.action');
+       
+        Route::get('store-order', [StoreOrderController::class, 'index'])->name('store-order.index');
+        Route::post('store-order-bulk-action', [StoreOrderController::class, 'bulk_action'])->name('store-order.bulk-action');
+        Route::get('store-order/{id}', [StoreOrderController::class, 'show'])->name('store-order.show');
+        Route::delete('store-order-destroy/{id}', [StoreOrderController::class, 'destroy'])->name('store-order.destroy');
+        Route::get('store-order-index-data', [StoreOrderController::class, 'index_data'])->name('store-order.index-data');
+        Route::post('store-order-action', [StoreOrderController::class, 'action'])->name('store-order.action');
+        Route::post('store-order-layout-page/{id}', [StoreOrderController::class, 'orderStatus'])->name('store_order_layout_page');
+        Route::get('store-order-change-order-status-form/{id}', [StoreOrderController::class, 'changeOrderStatusForm'])->name('store-order.change_order_status_form');
+        Route::post('store-order-change-order-status', [StoreOrderController::class, 'changeOrderStatus'])->name('store-order.change_order_status');
+        Route::get('store-order/invoice_pdf/{id}', [StoreOrderController::class, 'createPDF'])->name('store-order.invoice_pdf');
+
+    });
 });
 Route::get('/ajax-list', [HomeController::class, 'getAjaxList'])->name('ajax-list');
 Route::post('/service-list', [HomeController::class, 'getAjaxServiceList'])->name('service-list');

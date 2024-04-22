@@ -57,7 +57,17 @@ Route::post('handyman-reviews',[API\User\UserController::class, 'handymanReviews
 Route::post('service-reviews', [ API\ServiceController::class, 'serviceReviewsList' ] );
 Route::get('post-job-status', [ API\PostJobRequestController::class, 'postRequestStatus' ] );
 
+
+Route::get('user-subscription-plan-list', [ API\UserSubscriptionPlanController::class, 'subscriptionPlanList' ] );
+Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::class, 'showPlan' ] );
+Route::get('store-category-list',[API\StoreCategoryController::class,'getCategoryList']);
+Route::get('store-subcategory-list',[API\StoreSubCategoryController::class,'getSubCategoryList']);
+Route::get('store-item-list',[API\StoreItemController::class,'getItemList']);
+
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('store-item-order',[API\StoreOrderController::class,'store']);
+    Route::get('store-order-list', [ API\StoreOrderController::class, 'getOrderList' ] );
     Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     //Route::post('service-save', [ App\Http\Controllers\ServiceController::class, 'store' ] );
     Route::post('service-delete/{id}', [ App\Http\Controllers\ServiceController::class, 'destroy' ] );
@@ -115,6 +125,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('provider-payout-list', [ API\PayoutController::class, 'providerPayoutList' ] );
     Route::get('handyman-payout-list', [ API\PayoutController::class, 'handymanPayoutList' ] );
 
+    
     Route::get('plan-list', [ API\PlanController::class, 'planList' ] );
     Route::post('save-subscription', [ API\SubscriptionController::class, 'providerSubscribe' ] );
     Route::post('cancel-subscription', [ API\SubscriptionController::class, 'cancelSubscription' ] );
@@ -157,9 +168,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user-favourite-provider',[ API\ProviderFavouriteController::class, 'getUserFavouriteProvider' ]);
     Route::post('download-invoice',[API\CommanController::class,'downloadInvoice']);
     Route::get('user-wallet-balance',[API\User\UserController::class,'userWalletBalance']);
-    
-
-
     Route::get('configurations', [ API\DashboardController::class, "configurations"]);
 
+    
+    Route::post('user-subscription-order', [API\UserSubscriptionOrderController::class, 'store' ] );
+    Route::post('user-subscription-order-save-payment',[API\PaymentController::class, 'UserSubscriptionSavePayment']);
+
+    Route::post('store-order-save-payment',[API\PaymentController::class, 'StoreOrderSavePayment']);
 });

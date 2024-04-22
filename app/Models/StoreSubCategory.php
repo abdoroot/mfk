@@ -37,4 +37,9 @@ class StoreSubCategory extends BaseModel implements HasMedia
     {
         return $query->orderBy('deleted_at', 'asc');
     }
+
+    public function items()
+    {
+        return $this->hasMany('App\Models\StoreItem', 'subcategory_id', 'id')->withTrashed();
+    }
 }

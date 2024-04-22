@@ -1,5 +1,20 @@
 <?php
+
 use \Illuminate\Support\Facades\File;
+
+function getOrdersStatus()
+{
+    $ordersStatus = [
+        "accept" => __('messages.accepted'),
+        "completed" => __('messages.completed'),
+        "waiting" => __('messages.waiting'),
+        "cancelled" => __('messages.status_cancelled'),
+        "shipped" => __('messages.shipped'),
+        "rejected" => __('messages.rejected'),
+    ];
+
+    return $ordersStatus;
+}
 
 function authSession($force = false)
 {
@@ -57,12 +72,10 @@ function checkMenuRoleAndPermission($menu)
                 if (auth()->user()->hasAnyPermission($menu->data('permission'))) {
                     return true;
                 }
-
             }
             if (auth()->user()->can($menu->data('permission'))) {
                 return true;
             }
-
         }
     }
 
@@ -100,6 +113,7 @@ function getSingleMedia($model, $collection = 'profile_image', $skip = true)
     if ($model !== null) {
         $media = $model->getFirstMedia($collection);
     }
+
 
     if (getFileExistsCheck($media)) {
         return $media->getFullUrl();
@@ -203,14 +217,180 @@ function getAttachmentArray($attchments)
 function getMediaFileExit($model, $collection = 'profile_image')
 {
     if ($model == null) {
-        return asset('images/user/user.png');
-        ;
+        return asset('images/user/user.png');;
     }
 
     $media = $model->getFirstMedia($collection);
 
     return getFileExistsCheck($media);
 }
+
+function sendUserSubscriptionOrderNotification($data, $sendTo = ['admin', 'provider'])
+{
+    $customer_name = $data->customer->display_name;
+    $notification_data = [
+        'id' => $data->id,
+        'type' => 'add_user_subscription_order',
+        'subject' => 'add_user_subscription_order',
+        'message' => __('messages.user_subscription_order_added', ['name' => $customer_name]),
+        "ios_badgeType" => "Increase",
+        "ios_badgeCount" => 1,
+        "notification-type" => 'user_subscription_order'
+    ];
+    foreach ($sendTo as $to) {
+        switch ($to) {
+            case 'admin':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'admin');
+                break;
+            case 'provider':
+                $user = \App\Models\User::getUserByKeyValue('id', $data->provider_id);
+                break;
+            case 'handyman':
+                $handymans = $data['booking']->handymanAdded->pluck('handyman_id');
+                foreach ($handymans as $id) {
+                    $user = \App\Models\User::getUserByKeyValue('id', $id);
+                    sendNotification('provider', $user, $notification_data);
+                }
+                break;
+            case 'user':
+                $user = \App\Models\User::getUserByKeyValue('id', $data->customer_id);
+                break;
+        }
+        if ($to != 'handyman') {
+            sendNotification($to, $user, $notification_data);
+        }
+    }
+}
+
+use App\Models\AppSetting;
+use App\Models\User;
+use App\Models\SubscriptionOrderActivity;
+
+function saveSubscriptionOrderActivity($data)
+{
+    $admin = AppSetting::first();
+    date_default_timezone_set($admin->time_zone ?? 'UTC');
+    $data['datetime'] = date('Y-m-d H:i:s');
+    $role = auth()->user()->user_type;
+
+    switch ($data['activity_type']) {
+        case "add_subscription_order":
+            $customer_name = $data['subscription_order']->customer->display_name;
+            $data['activity_message'] = __('messages.subscription_order_added', ['name' => $customer_name]);
+            $data['activity_type'] = __('messages.add_subscription_order');
+            $activity_data = [
+                'plan_id' => $data['subscription_order']->plan_id,
+                'plan_name' => isset($data['subscription_order']->plan) ? $data['subscription_order']->plan->name : '',
+                'customer_id' => $data['subscription_order']->customer_id,
+                'customer_name' => isset($data['subscription_order']->customer) ? $data['subscription_order']->customer->display_name : '',
+            ];
+            $sendTo = ['admin', 'provider'];
+            break;
+        case "payment_message_status":
+            $data['activity_type'] = __('messages.payment_message_status');
+
+            $data['activity_message'] = __('messages.payment_message', ['status' => $data['payment_status']]);
+
+            $activity_data = [
+                'activity_type' => $data['activity_type'],
+                'payment_status' => $data['payment_status'],
+                'subscription_order_id' => $data['subscription_order_id'],
+            ];
+            $sendTo = ['admin', 'provider', 'user'];
+            break;
+        default:
+            $activity_data = [];
+            break;
+    }
+
+    $data['activity_data'] = json_encode($activity_data);
+    //SubscriptionOrderActivity::create($data); //todo
+
+    $notification_data = [
+        'id' => $data['subscription_order']->id,
+        'type' => $data['activity_type'],
+        'subject' => $data['activity_type'],
+        'message' => $data['activity_message'],
+        "ios_badgeType" => "Increase",
+        "ios_badgeCount" => 1,
+        "notification-type" => 'user_subscription_order'
+    ];
+
+    foreach ($sendTo as $to) {
+        switch ($to) {
+            case 'admin':
+                $user = User::getUserByKeyValue('user_type', 'admin');
+                break;
+            case 'provider':
+                $user = User::getUserByKeyValue('id', $data['subscription_order']->provider_id);
+                break;
+            case 'user':
+                $user = \App\Models\User::getUserByKeyValue('id', $data['subscription_order']->customer_id);
+                break;
+        }
+
+        sendNotification($to, $user, $notification_data);
+    }
+}
+
+
+function saveStoreOrderActivity($data)
+{
+    $admin = \App\Models\AppSetting::first();
+    date_default_timezone_set($admin->time_zone ?? 'UTC');
+    $data['datetime'] = date('Y-m-d H:i:s');
+    $role = auth()->user()->user_type;
+
+    switch ($data['activity_type']) {
+        case "add_store_order":
+            $customer_name = $data['order']->customer->display_name;
+            $data['activity_message'] = __('messages.order_added', ['name' => $customer_name]);
+            $sendTo = ['providers','admin'];
+            break;
+        case "payment_message_status":
+            $customer_name = $data['order']->customer->display_name;
+            $data['activity_message'] = __('messages.payment_message_status', ['name' => $customer_name]);
+            $sendTo = ['providers','admin'];
+            break;            
+    }
+
+    $notification_data = [
+        'id' => $data['order']->id,
+        'type' => $data['activity_type'],
+        'subject' => $data['activity_type'],
+        'message' => $data['activity_message'],
+        "ios_badgeType" => "Increase",
+        "ios_badgeCount" => 1,
+        "notification-type" => 'store_order'
+    ];
+    foreach ($sendTo as $to) {
+        switch ($to) {
+            case 'admin':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'admin');
+                break;
+            case 'providers':
+                $user = \App\Models\User::getUserByKeyValue('user_type', 'provider'); //get all providers
+                break;
+            case 'provider':
+                $user = \App\Models\User::getUserByKeyValue('id', $data['order']->provider_id);
+                break;                
+            case 'handyman':
+                $handymans = $data['order']->handymanAdded->pluck('handyman_id');
+                foreach ($handymans as $id) {
+                    $user = \App\Models\User::getUserByKeyValue('id', $id);
+                    sendNotification('provider', $user, $notification_data);
+                }
+                break;
+            case 'user':
+                $user = \App\Models\User::getUserByKeyValue('id', $data['order']->customer_id);
+                break;
+        }
+        if ($to != 'handyman') {
+            sendNotification($to, $user, $notification_data);
+        }
+    }
+}
+
 
 function saveBookingActivity($data)
 {
@@ -339,7 +519,6 @@ function saveBookingActivity($data)
             sendNotification($to, $user, $notification_data);
         }
     }
-
 }
 function formatOffset($offset)
 {
@@ -424,7 +603,7 @@ function getPriceFormat($price)
     $currency_symbol = \App\Models\Setting::where('type', 'CURRENCY')->where('key', 'CURRENCY_COUNTRY_ID')->with('country')->first();
     // print_r($currency_symbol);
     // exit;
-    $symbol = '$';
+    $symbol = 'AED';
     if (!empty($currency_symbol)) {
         $symbol = $currency_symbol->country->symbol;
     }
@@ -825,7 +1004,6 @@ function getSettingKeyValue($type = "", $key = "")
             default:
                 break;
         }
-
     }
 }
 
@@ -894,11 +1072,9 @@ function format_commission($value)
             $commission = $commission_value . '%';
         } else {
             $commission = getPriceFormat((float) $commission_value);
-
         }
 
         return $commission;
-
     }
 }
 
@@ -1005,7 +1181,6 @@ function adminEarning()
             }
             $revenuedata[$key]['providerEarning'] = $earning;
             $revenuedata[$key]['afterAmount'] = $total_amount - $earning;
-
         } else {
             $revenuedata[$key]['providerEarning'] = 0;
             $revenuedata[$key]['afterAmount'] = 0;
@@ -1073,7 +1248,6 @@ function savePayoutActivity($data)
         $user->notify(new App\Notifications\CommonNotification($data['activity_type'], $notification_data));
         $user->notify(new \App\Notifications\PayoutNotification($notification_data));
     }
-
 }
 
 function getTimeZone()
@@ -1099,8 +1273,16 @@ function get_plan_expiration_date($plan_start_date = '', $plan_type = '', $left_
     if ($plan_type === 'yearly') {
         $end_date = $start_at->addYears($plan_duration)->addDays($left_days);
     }
+    if ($plan_type === '3_months') {
+        $end_date = $start_at->addMonths(3)->addDays($left_days);
+    }
+    if ($plan_type === '6_months') {
+        $end_date = $start_at->addMonths(6)->addDays($left_days);
+    }
+
     return $end_date->format('Y-m-d H:i:s');
 }
+
 
 function get_user_active_plan($user_id)
 {
@@ -1303,7 +1485,6 @@ function get_provider_plan_limit($provider_id, $type)
                     $exceed = 0;
                 }
             }
-
         } else {
             return;
         }
@@ -1377,8 +1558,6 @@ function sendNotification($type, $user, $data)
             'data' => json_encode($childData)
         )
     );
-
-
 }
 function saveRequestJobActivity($data)
 {
@@ -1440,7 +1619,6 @@ function saveRequestJobActivity($data)
 
     $response = curl_exec($ch);
     curl_close($ch);
-
 }
 
 function saveJobActivity($data)
@@ -1503,7 +1681,6 @@ function saveJobActivity($data)
             sendNotification($to, $user, $notification_data);
         }
     }
-
 }
 
 function getServiceTimeSlot($provider_id)
@@ -1618,7 +1795,6 @@ function today_cash_total($user_id, $to = '', $from = '', $type = '')
             ->whereDate('datetime', '>=', $from)
             ->whereDate('datetime', '<=', $to)
             ->sum('total_amount');
-
     }
 
     if (auth()->user()->hasAnyRole(['provider'])) {
@@ -1649,7 +1825,6 @@ function total_cash($user_id)
                     ->orWhere('status', 'send_to_provider');
             })
             ->sum('total_amount');
-
     }
     if (auth()->user()->hasAnyRole(['provider'])) {
 
@@ -1660,7 +1835,6 @@ function total_cash($user_id)
                     ->orWhere('status', 'pending_by_admin');
             })
             ->sum('total_amount');
-
     }
 
 
@@ -1719,11 +1893,9 @@ function providerpayout_rezopayX($data)
         if ($is_test == 1) {
 
             $json_data = $rezorpay_data['value'];
-
         } else {
 
             $json_data = $rezorpay_data['live_value'];
-
         }
 
         $currency_country_data = \App\Models\Setting::where('type', 'CURRENCY')->first();
@@ -1814,7 +1986,6 @@ function providerpayout_rezopayX($data)
 
         return $response = '';
     }
-
 }
 
 function providerpayout_stripe($data)
@@ -1831,11 +2002,9 @@ function providerpayout_stripe($data)
         if ($is_test == 1) {
 
             $json_data = $stripe_data['value'];
-
         } else {
 
             $json_data = $stripe_data['live_value'];
-
         }
 
         $stripe_credentials = json_decode($json_data, true);
@@ -1924,7 +2093,6 @@ function providerpayout_stripe($data)
                 $stripe_account = $stripedata['id'];
 
                 \App\Models\Bank::where('id', $bank_id)->update(['stripe_account' => $stripe_account]);
-
             } catch (Stripe\Exception\ApiErrorException $e) {
 
                 //    $error1= $e->getError()->code;
@@ -1934,17 +2102,13 @@ function providerpayout_stripe($data)
                 if ($error == '') {
 
                     return $response = '';
-
                 } else {
 
                     $error['status'] = 400;
 
                     return $error;
-
                 }
-
             }
-
         }
 
         $data = [
@@ -1960,13 +2124,10 @@ function providerpayout_stripe($data)
         $bank_transfer = create_stripe_transfer($data);
 
         return $bank_transfer;
-
-
     } else {
 
         return $response = '';
     }
-
 }
 
 function create_stripe_transfer($data)
@@ -1985,8 +2146,6 @@ function create_stripe_transfer($data)
         $payout = create_bank_tranfer($data);
 
         return $payout;
-
-
     } catch (Stripe\Exception\ApiErrorException $e) {
 
         // $error1= $e->getError()->code;
@@ -1998,16 +2157,12 @@ function create_stripe_transfer($data)
         if ($error == '') {
 
             return $response = '';
-
         } else {
 
             $error['status'] = 400;
             return $error;
-
         }
-
     }
-
 }
 
 function create_bank_tranfer($data)
@@ -2026,7 +2181,6 @@ function create_bank_tranfer($data)
         ]);
 
         return $payout;
-
     } catch (Stripe\Exception\ApiErrorException $e) {
 
         // $error1= $e->getError()->code;
@@ -2037,15 +2191,10 @@ function create_bank_tranfer($data)
         if ($error == '') {
 
             return $response = '';
-
         } else {
 
             $error['status'] = 400;
             return $error;
-
         }
-
     }
-
-
 }

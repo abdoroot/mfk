@@ -167,15 +167,6 @@ class HomeController extends Controller
     }
     public function changeStatus(Request $request)
     {
-        if (demoUserPermission()) {
-            $message = __('messages.demo_permission_denied');
-            $response = [
-                'status' => false,
-                'message' => $message
-            ];
-
-            return comman_custom_response($response);
-        }
         $type = $request->type;
         $message_form = __('messages.item');
         $message = trans('messages.update_form', ['form' => trans('messages.status')]);
@@ -190,6 +181,21 @@ class HomeController extends Controller
                 $category->status = $request->status;
                 $category->save();
                 break;
+            case 'myhome_status':
+                $myhome = \App\Models\Myhome::find($request->id);
+                $myhome->status = $request->status;
+                $myhome->save();
+                break;   
+            case 'store_item_status':
+                $myhome = \App\Models\StoreItem::find($request->id);
+                $myhome->status = $request->status;
+                $myhome->save();
+                break;  
+            case 'user_subscriptions_plan_status':
+                $category = \App\Models\UserSubscriptionPlan::find($request->id);
+                $category->status = $request->status;
+                $category->save();
+                break;    
             case 'store_category_status':
                 $category = \App\Models\StoreCategory::find($request->id);
                 $category->status = $request->status;
@@ -382,6 +388,11 @@ class HomeController extends Controller
 
                 $items = $items->get();
                 break;
+                case 'store_subcategory_list':
+                    $category_id = !empty($request->category_id) ? $request->category_id : '';
+                    $items = \App\Models\StoreSubCategory::selectRaw('id, JSON_UNQUOTE(JSON_EXTRACT(name, "$.' . $locale . '")) as text')->where('category_id', $category_id)->where('status', 1);
+                    $items = $items->get();
+                    break;    
             case 'provider':
                 $items = \App\Models\User::select('id', 'display_name as text')
                     ->where('user_type', 'provider')

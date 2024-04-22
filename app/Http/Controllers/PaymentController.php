@@ -97,11 +97,13 @@ class PaymentController extends Controller
                     return '<a class="btn-link btn-link-hover" href='.route('booking.show', $payment->booking->id).'> #'.$payment->booking->id.'</a>';
                 }
             })
-            ->editColumn('booking_id', function($payment) {
-                if($payment->customer_id != null && isset($payment->booking->service)){
-                    return $payment->booking->service->name;
+            ->editColumn('booking_id', function($query) {
+                if($query->subscription_id != null){
+                    return (!is_null($query->subscriptionOrder->plan->title))  ?  __("messages.subscription")." - ".$query->subscriptionOrder->plan->title  : 'Unknow subscription plan';
+                }else if($query->store_order_id != null){
+                    return (isset($query->StoreOrder->id)) ? __("messages.order")." - ".$query->StoreOrder->id:'Unknow Store Order';
                 }else{
-                    return '-';
+                    return ($query->customer_id != null &&isset($query->booking->service)) ? __("messages.service")." - ".$query->booking->service->name :'-';
                 }
             })
             ->filterColumn('booking_id',function($query,$keyword){
@@ -165,9 +167,13 @@ class PaymentController extends Controller
                 return '<input type="checkbox" class="form-check-input select-table-row"  id="datatable-row-'.$row->id.'"  name="datatable_ids[]" value="'.$row->id.'" onclick="dataTableRowCheck('.$row->id.')">';
             })
         ->editColumn('booking_id', function($query) {
-
-
-            return ($query->customer_id != null &&isset($query->booking->service)) ? $query->booking->service->name :'-';
+            if($query->subscription_id != null){
+                return (!is_null($query->subscriptionOrder->plan->title))  ?  __("messages.subscription")." - ".$query->subscriptionOrder->plan->title  : 'Unknow subscription plan';
+            }else if($query->store_order_id != null){
+                return (isset($query->StoreOrder->id)) ? __("messages.order")." - ".$query->StoreOrder->id:'Unknow Store Order';
+            }else{
+                return ($query->customer_id != null &&isset($query->booking->service)) ? __("messages.service")." - ".$query->booking->service->name :'-';
+            }
         })
         ->filterColumn('booking_id',function($query,$keyword){
             $query->whereHas('booking.service',function ($q) use($keyword){

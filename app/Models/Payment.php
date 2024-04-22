@@ -10,10 +10,11 @@ class Payment extends Model
 {
     use HasFactory,SoftDeletes;
     protected $table = 'payments';
-    protected $fillable = [ 'customer_id', 'booking_id', 'datetime', 'discount', 'total_amount', 'payment_type', 'txn_id', 'payment_status', 'other_transaction_detail' ];
+    protected $fillable = [ 'customer_id', 'booking_id','subscription_id','store_order_id', 'datetime', 'discount', 'total_amount', 'payment_type', 'txn_id', 'payment_status', 'other_transaction_detail' ];
 
     protected $casts = [
         'booking_id'    => 'integer',
+        'subscription_id'    => 'integer',
         'customer_id'   => 'integer',
         'discount'      => 'double',
         'total_amount'  => 'double',
@@ -24,6 +25,12 @@ class Payment extends Model
     }
     public function booking(){
         return $this->belongsTo(Booking::class,'booking_id', 'id')->withTrashed();
+    }
+    public function subscriptionOrder(){
+        return $this->belongsTo(UserSubscriptionOrder::class,'subscription_id', 'id')->withTrashed();
+    }
+    public function StoreOrder(){
+        return $this->belongsTo(StoreOrder::class,'store_order_id', 'id')->withTrashed();
     }
     public function scopeMyPayment($query)
     {

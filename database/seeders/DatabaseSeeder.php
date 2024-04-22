@@ -64,7 +64,13 @@ class DatabaseSeeder extends Seeder
             CouponServiceMappingsTableSeeder::class,
             AppDownloadsTableSeeder::class,
             WalletsTableSeeder::class,
-            WalletHistoriesTableSeeder::class
+            WalletHistoriesTableSeeder::class,
+            StoreOrderSeeder::class,
+            StoreItemSeeder::class,
+            StoreCategorySeeder::class,
+            StoreSubCategorySeeder::class,
+            UserSubscriptionOrderseeder::class,
+            UserSubscriptionPlanSeeder::class,
         ]);
         $this->call(SettingsTableSeeder::class);
     }

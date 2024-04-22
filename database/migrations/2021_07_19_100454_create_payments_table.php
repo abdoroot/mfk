@@ -16,7 +16,9 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('booking_id');
+            $table->unsignedBigInteger('booking_id')->nullable()->default(null);
+            $table->unsignedBigInteger('subscription_id')->nullable()->default(null);
+            $table->unsignedBigInteger('store_order_id')->nullable()->default(null);
             $table->dateTime('datetime')->nullable()->default(null);
             $table->double('discount')->nullable()->default('0');
             $table->double('total_amount')->nullable()->default('0');
@@ -26,7 +28,7 @@ class CreatePaymentsTable extends Migration
             $table->text('other_transaction_detail')->nullable()->default(null);
 
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            //$table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

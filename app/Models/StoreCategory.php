@@ -29,14 +29,14 @@ class StoreCategory extends BaseModel implements HasMedia
         'is_featured' => 'integer',
     ];
 
-    public function services()
-    {
-        return $this->hasMany(Service::class, 'category_id', 'id');
-    }
     public function scopeList($query)
     {
         return $query->orderBy('updated_at', 'desc');
     }
 
+    public function items()
+    {
+        return $this->hasMany('App\Models\StoreItem', 'category_id', 'id')->withTrashed();
+    }
 
 }
