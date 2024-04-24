@@ -25,12 +25,12 @@ class CreateUserSubscriptionOrderRequest extends FormRequest
     {
         return [
             'plan_id' => 'required|integer',
-            'customer_id' => 'required|integer',
+            //'customer_id' => 'required|integer',
             //'address' => 'required|string',
-            'amount' => 'numeric',
-            'tax' => 'required|numeric',
+            //'amount' => 'numeric',
+            //'tax' => 'required|numeric',
             'discount' => 'numeric',
-            'total_amount' => 'required|numeric',
+            //'total_amount' => 'required|numeric',
         ];
     }
 }

@@ -8,9 +8,7 @@ use App\Models\UserSubscriptionOrder as Order;
 use App\Models\UserSubscriptionPlan as Plan;
 use App\Http\Requests\CreateUserSubscriptionOrderRequest;
 use App\Models\Coupon;
-use App\Models\Customer;
-use App\Models\Payment;
-use App\Models\User;
+use App\Http\Resources\API\UserSubscribeOrderResource;
 
 class UserSubscriptionOrderController extends Controller
 {
@@ -65,5 +63,37 @@ class UserSubscriptionOrderController extends Controller
         ];
 
         return comman_custom_response($response,201);
+    }
+
+    public function index(Request $request){
+        $user_id = auth()->id();
+        $subscription_history = Order::where('customer_id',$user_id);
+        $per_page = config('constant.PER_PAGE_LIMIT');
+        $orderBy = $request->orderby ? $request->orderby: 'asc';
+        if( $request->has('per_page') && !empty($request->per_page)){
+            if(is_numeric($request->per_page)){
+                $per_page = $request->per_page;
+            }
+            if($request->per_page === 'all' ){
+                $per_page = $subscription_history->count();
+            }
+        }
+        $subscription_history = $subscription_history->orderBy('id',$orderBy)->paginate($per_page);
+        $items = UserSubscribeOrderResource::collection($subscription_history);
+        $response = [
+            'pagination' => [
+                'total_items' => $items->total(),
+                'per_page' => $items->perPage(),
+                'currentPage' => $items->currentPage(),
+                'totalPages' => $items->lastPage(),
+                'from' => $items->firstItem(),
+                'to' => $items->lastItem(),
+                'next_page' => $items->nextPageUrl(),
+                'previous_page' => $items->previousPageUrl(),
+            ],
+            'data' => $items,
+        ];
+
+        return comman_custom_response($response);
     }
 }
