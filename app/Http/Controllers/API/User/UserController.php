@@ -22,7 +22,10 @@ use App\Models\ProviderSubscription;
 use App\Models\BookingHandymanMapping;
 use App\Models\Setting;
 use App\Models\UserPlayerIds;
+use App\Models\Myhome;
 use App\Http\Resources\API\HandymanRatingResource;
+use Carbon\Carbon;
+
 class UserController extends Controller
 {
 
@@ -251,6 +254,37 @@ class UserController extends Controller
         ];
         
         return comman_custom_response($response);
+    }
+
+    public function myHome(){
+        $auth_user_id = $user_id = auth()->id();
+        $myHomeData = Myhome::where("status",1)
+        ->where("customer_id",$auth_user_id)
+        ->orderBy('created_at', 'desc')
+        ->first(); 
+        $message = __('messages.detail');
+
+        if(empty($myHomeData)){
+            $message = __('messages.not_found');
+            return comman_message_response($message,400);   
+        }
+        $start_at = Carbon::createFromTimeString($myHomeData->start_date);
+        $end_date = Carbon::createFromTimeString($myHomeData->end_date);
+        $myhome_detail = [
+            "start_date" => $start_at->toDateString(),
+            "end_date" => $end_date->toDateString(),
+            "address" => $myHomeData->address,
+            "building_no" => $myHomeData->building_no,
+            "flat_no" => $myHomeData->flat_no,
+            "maintenance_borne" => $myHomeData->maintenance_borne,
+            "borne_type" => $myHomeData->borne_type,
+            "borne_amount" => $myHomeData->borne_amount,
+        ];
+       
+        $response = [
+            'data' => $myhome_detail,
+        ];
+        return comman_custom_response($response);  
     }
 
     public function userDetail(Request $request)

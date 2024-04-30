@@ -10,6 +10,7 @@ use App\Models\BookingRating;
 use App\Models\UserFavouriteService;
 use App\Models\CouponServiceMapping;
 use App\Models\ServiceFaq;
+use App\Models\UserSubscriptionOrder;
 use App\Http\Resources\API\ServiceResource;
 use App\Http\Resources\API\UserResource;
 use App\Http\Resources\API\ServiceDetailResource;
@@ -22,6 +23,8 @@ use App\Models\ProviderTaxMapping;
 use App\Models\Category;
 use App\Models\ServiceAddon;
 use App\Http\Resources\API\ServiceAddonResource;
+use App\Models\Myhome;
+use Carbon\Carbon;
 
 class ServiceController extends Controller
 {
@@ -153,8 +156,9 @@ class ServiceController extends Controller
     }
 
     public function getServiceDetail(Request $request){
+        dd(auth()->user());
         $id = $request->service_id;
-       
+        $userHaveActiveSubscription = false;
         if(auth()->user() !== null){
             if(auth()->user()->hasRole('admin')){
                 $service = Service::where('service_type','service')->withTrashed()->with('providers','category','serviceRating','serviceAddon')->findorfail($id);
@@ -162,6 +166,37 @@ class ServiceController extends Controller
             else{
                 $service = Service::where('service_type','service')->with('providers','category','serviceRating','serviceAddon')->findorfail($id);
             }
+            //Check if the customer have active subscription
+            $user = auth()->user();
+            $UserSubscriptionOrders = UserSubscriptionOrder::where("customer_id",$user->id)
+            ->where("status",1)
+            ->where("end_at",">",Carbon::today()->toDateString());
+            if($UserSubscriptionOrders->count() > 0){
+                $userHaveActiveSubscription = true;
+                $subscriptions = $UserSubscriptionOrders->get();
+                if(count($subscriptions) > 0){
+                    foreach($subscriptions as $k => $subscription){
+                        $plan = $subscription->plan;
+                        //if normal Subscription service fees = 0;
+                        //if myhome service fee = calulate the fees base on borne;
+                        if(is_null($subscription->subcategory_id) && $service->category_id == $subscription->category_id){
+                            //check main category and subcategory empty (Plan with Only category )
+                            $serviseFees = ServiceController::calulateServiceFeeBySubScription($service->price,$subscription);
+                            dd($serviseFees);
+                            break;
+                        }else if(!is_null($subscription->subcategory_id) 
+                        && $service->category_id == $subscription->category_id
+                        && $service->subcategory_id == $subscription->subcategory_id
+                        ){
+                            //check subcategory (Plan with category and subcategory)
+                            $serviseFees = ServiceController::calulateServiceFeeBySubScription($service->price,$subscription);
+                            dd($serviseFees);
+                            break;
+                        }
+                    }
+                }
+            }
+
         }else{
             $service = Service::where('service_type','service')->where('status',1)->with('providers','category','serviceRating','serviceAddon')->find($id);
         }
@@ -379,5 +414,23 @@ class ServiceController extends Controller
             $message = trans('messages.save_form',['form' => trans('messages.coupon')]);
         }
         return comman_message_response($message);
+    }
+
+    static function  calulateServiceFeeBySubScription($servicePrice,$subscription): float {
+        $serviceFees = 0.00;
+        if(is_null($subscription->my_home_id)){
+            //zero fees 
+            return $serviceFees;
+        }else{
+            $borneAmount = 0;
+            $myHome = Myhome::find($subscription->my_home_id);
+            $borneAmount = ($myHome->borne_type == "amount") ? $myHome->borne_amount:($servicePrice * $myHome->borne_amount) / 100;
+            if($myHome->maintenance_borne == "owner"){
+                $serviceFees = $servicePrice - $borneAmount;
+            }else if($myHome->maintenance_borne == "tenant"){
+                $serviceFees = $borneAmount;
+            }
+        }
+        return round($serviceFees, 2);
     }
 }
