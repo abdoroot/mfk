@@ -157,7 +157,6 @@ class ServiceController extends Controller
 
     public function getServiceDetail(Request $request){
         $id = $request->service_id;
-        $userHaveActiveSubscription = false;
         if(auth()->user() !== null){
             if(auth()->user()->hasRole('admin')){
                 $service = Service::where('service_type','service')->withTrashed()->with('providers','category','serviceRating','serviceAddon')->findorfail($id);
@@ -168,32 +167,30 @@ class ServiceController extends Controller
             //Check if the customer have active subscription
             $user = auth()->user();
             $UserSubscriptionOrders = UserSubscriptionOrder::where("customer_id",$user->id)
-             //->where("status",1) "completed"
+             ->where("status","completed") 
              ->where("end_at",">",Carbon::today()->toDateString());
             if($UserSubscriptionOrders->count() > 0){
-                $userHaveActiveSubscription = true;
                 $subscriptions = $UserSubscriptionOrders->get();
                 if(count($subscriptions) > 0){
                     foreach($subscriptions as $k => $subscription){
                         $plan = $subscription->plan;
                         //if normal Subscription service fees = 0;
                         //if myhome service fee = calulate the fees base on borne;
-                        if(is_null($subscription->subcategory_id) && $service->category_id == $subscription->category_id){
+                        if(is_null($plan->subcategory_id) && $service->category_id == $plan->category_id){
                             //check main category and subcategory empty (Plan with Only category )
                             $serviseFees = ServiceController::calulateServiceFeeBySubScription($service->price,$subscription);
                             dd($service->price,$serviseFees,"category");
                             $service->price = $serviseFees;
                             break;
-                        }else if(!is_null($subscription->subcategory_id) 
-                        && $service->category_id == $subscription->category_id
-                        && $service->subcategory_id == $subscription->subcategory_id
+                        }else if(!is_null($plan->subcategory_id) 
+                        && $service->category_id == $plan->category_id
+                        && $service->subcategory_id == $plan->subcategory_id
                         ){
                             //check subcategory (Plan with category and subcategory)
                             $serviseFees = ServiceController::calulateServiceFeeBySubScription($service->price,$subscription);
-                            dd($service->price,$serviseFees,"category,subcategory");
                             $service->price = $serviseFees;
                             break;
-                        }else if(is_null($subscription->category_id)){
+                        }else if(is_null($plan->category_id)){
                             //my home subscriptions are null
                             //null sub == for all srevice
                             $serviseFees = ServiceController::calulateServiceFeeBySubScription($service->price,$subscription);
@@ -212,9 +209,6 @@ class ServiceController extends Controller
             $message = __('messages.record_not_found');
             return comman_message_response($message,406);   
         }
-
-        
-
 
         $service_detail = new ServiceDetailResource($service);
         $related = $service->where('service_type','service')->where('category_id',$service->category_id);
