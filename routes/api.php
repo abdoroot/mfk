@@ -63,6 +63,7 @@ Route::get('user-subscription-plan/{id}', [ API\UserSubscriptionPlanController::
 Route::get('store-category-list',[API\StoreCategoryController::class,'getCategoryList']);
 Route::get('store-subcategory-list',[API\StoreSubCategoryController::class,'getSubCategoryList']);
 Route::get('store-item-list',[API\StoreItemController::class,'getItemList']);
+Route::get('store-item/{id}',[API\StoreItemController::class,'getItemById']);
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

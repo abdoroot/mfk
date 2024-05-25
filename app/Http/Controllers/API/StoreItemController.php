@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\StoreItem;
 use App\Http\Resources\API\StoreItemResource;
-use App\Http\Resources\API\StoreItemDetailResource;
+use App\Http\Resources\API\UserResource;
 
 class StoreItemController extends Controller
 {
@@ -45,4 +45,18 @@ class StoreItemController extends Controller
 
         return comman_custom_response($response);
     }
+
+    public function getItemById(Request $request)
+    {
+        $id = $request->id;
+        $item = StoreItem::findOrFail($id);
+        $item_detail = new StoreItemResource($item);
+
+        $response = [
+            'item_detail'    => $item_detail,
+            'provider'          => new UserResource(optional($item->providers)),
+        ];
+        return comman_custom_response($response);
+    }
+
 }
