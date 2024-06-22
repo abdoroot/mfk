@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
 use App\Http\Controllers\API;
+use App\Http\Controllers\API\CartController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -46,6 +47,13 @@ Route::post('forgot-password',[ API\User\UserController::class,'forgotPassword']
 Route::post('social-login',[ API\User\UserController::class, 'socialLogin' ]);
 Route::post('contact-us', [ API\User\UserController::class, 'contactUs' ] );
 
+Route::group(['middleware' => ['sanctum.optional']], function () {
+    Route::get('cart', [CartController::class, 'index']);
+    Route::post('cart', [CartController::class, 'store']);
+    Route::put('cart/{id}', [CartController::class, 'update']);
+    Route::delete('cart/{id}', [CartController::class, 'destroy']);
+    Route::delete('cart', [CartController::class, 'clear']);
+});
 
 Route::get('dashboard-detail',[ API\DashboardController::class, 'dashboardDetail' ]);
 Route::get('service-rating-list',[API\ServiceController::class,'getServiceRating']);
