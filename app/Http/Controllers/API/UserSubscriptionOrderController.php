@@ -9,6 +9,7 @@ use App\Models\UserSubscriptionPlan as Plan;
 use App\Http\Requests\CreateUserSubscriptionOrderRequest;
 use App\Models\Coupon;
 use App\Http\Resources\API\UserSubscribeOrderResource;
+use App\Models\Payment;
 
 class UserSubscriptionOrderController extends Controller
 {
@@ -92,6 +93,19 @@ class UserSubscriptionOrderController extends Controller
                 'previous_page' => $items->previousPageUrl(),
             ],
             'data' => $items,
+        ];
+
+        return comman_custom_response($response);
+    }
+
+    public function show(Request $request,$id){
+        $order = Order::where('id',$id,);
+        $subscription = $order->first();
+        $item = new UserSubscribeOrderResource($subscription);
+        $payments = Payment::where("subscription_id",$item->id)->get();//subscription_id
+        $response = [
+            'data' => $item,
+            'payments' => $payments,
         ];
 
         return comman_custom_response($response);

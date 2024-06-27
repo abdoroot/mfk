@@ -182,6 +182,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     
     Route::post('user-subscription-order', [API\UserSubscriptionOrderController::class, 'store' ] );
     Route::get('user-subscription-order', [API\UserSubscriptionOrderController::class, 'index' ] );
+    Route::get('user-subscription-order/{id}', [API\UserSubscriptionOrderController::class, 'show' ] );
     Route::post('user-subscription-order-save-payment',[API\PaymentController::class, 'UserSubscriptionSavePayment']);
 
     Route::post('store-order-save-payment',[API\PaymentController::class, 'StoreOrderSavePayment']);
