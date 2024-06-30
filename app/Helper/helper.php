@@ -1,7 +1,7 @@
 <?php
 
 use \Illuminate\Support\Facades\File;
-
+use Illuminate\Support\Facades\Log;
 function getOrdersStatus()
 {
     $ordersStatus = [
@@ -166,19 +166,52 @@ function getFileExistsCheck($media)
 
 function storeMediaFile($model, $file, $name)
 {
+    // Start of the function
+    Log::info("storeMediaFile called with parameters", [
+        'model' => get_class($model),
+        'file' => is_array($file) ? 'array of files' : 'single file',
+        'name' => $name
+    ]);
+
     if ($file) {
-        if (!in_array($name, ['service_attachment', 'package_attachment', 'blog_attachment'])) {
-            $model->clearMediaCollection($name);
-        }
-        if (is_array($file)) {
-            foreach ($file as $key => $value) {
-                $model->addMedia($value)->toMediaCollection($name);
+        Log::info("Attempting to upload file", ['collection_name' => $name]);
+
+        try {
+            // Check if the collection name is one of the specified ones
+            if (!in_array($name, ['service_attachment', 'package_attachment', 'blog_attachment'])) {
+                Log::info("Clearing media collection", ['collection_name' => $name]);
+                $model->clearMediaCollection($name);
             }
-        } else {
-            $model->addMedia($file)->toMediaCollection($name);
+
+            // Handle multiple files
+            if (is_array($file)) {
+                Log::info("Handling multiple files upload", ['file_count' => count($file)]);
+                foreach ($file as $key => $value) {
+                    Log::info("Uploading file", ['file_key' => $key, 'file_name' => $value->getClientOriginalName()]);
+                    $model->addMedia($value)->toMediaCollection($name);
+                }
+            } else {
+                // Handle single file
+                Log::info("Uploading single file", ['file_name' => $file->getClientOriginalName()]);
+                $model->addMedia($file)->toMediaCollection($name);
+            }
+
+            Log::info("File upload successful", ['collection_name' => $name]);
+        } catch (\Exception $e) {
+            // Log the error if the upload fails
+            Log::error("File upload failed", [
+                'collection_name' => $name,
+                'error_message' => $e->getMessage(),
+                'file' => is_array($file) ? array_map(fn($f) => $f->getClientOriginalName(), $file) : $file->getClientOriginalName()
+            ]);
+            return false;
         }
+    } else {
+        Log::warning("No file provided for upload", ['collection_name' => $name]);
     }
 
+    // End of the function
+    Log::info("storeMediaFile function completed", ['collection_name' => $name]);
     return true;
 }
 

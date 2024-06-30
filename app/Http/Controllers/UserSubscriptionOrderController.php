@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\BookingStatus;
 use App\Models\UserSubscriptionOrder;
+use App\Models\Notification;
 use Carbon\Carbon;
 
 class UserSubscriptionOrderController extends Controller
@@ -205,5 +206,35 @@ class UserSubscriptionOrderController extends Controller
         return response()->json(['status' => true,'event' => 'callback' , 'message' => $message]);
     }
 
+    public function destroy($id)
+    {
+        $order = UserSubscriptionOrder::find($id);
+        $msg = __('messages.msg_fail_to_delete',['item' => __('messages.order')] );
+        if($order != '') {
+            Notification::whereJsonContains('data->id',$order->id)->delete();
+            $order->delete();
+            $msg = __('messages.msg_deleted',['name' => __('messages.order')] );
+        }
+        return comman_custom_response(['message'=> $msg, 'status' => true]);
+    }
     
+    public function action(Request $request)
+    {
+        $id = $request->id;
+        $type = $request->type;
+        $order_data = UserSubscriptionOrder::withTrashed()->where('id',$id)->first();
+        $msg = __('messages.not_found_entry',['name' => __('messages.order')] );
+        if($request->type === 'restore'){
+            if($order_data != ''){
+                $order_data->restore();
+                $msg = __('messages.msg_restored',['name' => __('messages.order')] );
+            }
+        }
+        if($request->type === 'forcedelete'){
+            $order_data->forceDelete();
+            $msg = __('messages.msg_forcedelete',['name' => __('messages.order')] );
+        }
+
+        return comman_custom_response(['message'=> $msg , 'status' => true]);
+    }
 }

@@ -416,7 +416,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('user-subscriptions-data', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.index_data');
         Route::delete('user-subscription/{id}', [UserSubscriptionPlanController::class, 'destroy'])->name('user-subscriptions-plan.destroy');
         Route::post('user-subscriptions-bulk-action', [UserSubscriptionPlanController::class, 'index_data'])->name('user-subscriptions-plan.bulk-action');
-
         Route::get('user-subscriptions', [UserSubscriptionOrderController::class, 'index'])->name('user-subscriptions.index');
         Route::get('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'show'])->name('user-subscriptions.show');
         Route::get('user-subscriptions-index-data', [UserSubscriptionOrderController::class, 'index_data'])->name('user-subscriptions.index_data');
@@ -424,6 +423,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('user-subscriptions-change-order-status-form/{id}', [UserSubscriptionOrderController::class, 'changeOrderStatusForm'])->name('user-subscriptions.change_order_status_form');
         Route::post('user-subscriptions-change-order-status', [UserSubscriptionOrderController::class, 'changeOrderStatus'])->name('user-subscriptions.change_order_status');
         
+        //todo: handle delete user-subscriptions
+        Route::post('user-subscriptions-action', [UserSubscriptionOrderController::class, 'action'])->name('user-subscriptions.action');
+        Route::delete('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'destroy'])->name('user-subscriptions.destroy');
+
         Route::resource('my-home',MyHomeController::class);
         Route::get('my-home-index-data', [MyHomeController::class, 'index_data'])->name('my-home.index_data');
         Route::post('my-home-bulk-action', [MyHomeController::class, 'bulk_action'])->name('my-home.bulk-action');

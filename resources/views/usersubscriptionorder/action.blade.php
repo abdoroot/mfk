@@ -6,11 +6,11 @@ $auth_user= authSession();
 <div class="d-flex justify-content-end align-items-center">
 @if(!$booking->trashed())
     @if($auth_user->can('booking delete') && !$booking->trashed())
-    <a class="mr-3" href="{{ route('booking.destroy', $booking->id) }}" data--submit="booking{{$booking->id}}" 
+    <a class="mr-3" href="{{ route('user-subscriptions.destroy', $booking->id) }}" data--submit="booking{{$booking->id}}" 
         data--confirmation='true'
         data--ajax="true"
         data-datatable="reload"
-        data-title="{{ __('messages.delete_form_title',['form'=>  __('messages.booking') ]) }}"
+        data-title="{{ __('messages.delete_form_title',['form'=>  __('messages.order') ]) }}"
         title="{{ __('messages.delete_form_title',['form'=>  __('messages.booking') ]) }}"
         data-message='{{ __("messages.delete_msg") }}'>
         <i class="far fa-trash-alt text-danger "></i>
@@ -18,8 +18,8 @@ $auth_user= authSession();
     @endif
 @endif
 @if(auth()->user()->hasAnyRole(['admin']) && $booking->trashed())
-    <a class="mr-2" href="{{ route('booking.action',['id' => $booking->id, 'type' => 'restore']) }}"
-        title="{{ __('messages.restore_form_title',['form' => __('messages.booking') ]) }}"
+    <a class="mr-2" href="{{ route('user-subscriptions.action',['id' => $booking->id, 'type' => 'restore']) }}"
+        title="{{ __('messages.restore_form_title',['form' => __('messages.order') ]) }}"
         data--submit="confirm_form"
         data--confirmation='true'
         data--ajax='true'
@@ -28,12 +28,12 @@ $auth_user= authSession();
         data-datatable="reload">
         <i class="fas fa-redo text-secondary"></i>
     </a>
-    <a href="{{ route('booking.action',['id' => $booking->id, 'type' => 'forcedelete']) }}"
-        title="{{ __('messages.forcedelete_form_title',['form' => __('messages.booking') ]) }}"
+    <a href="{{ route('user-subscriptions.action',['id' => $booking->id, 'type' => 'forcedelete']) }}"
+        title="{{ __('messages.forcedelete_form_title',['form' => __('messages.order') ]) }}"
         data--submit="confirm_form"
         data--confirmation='true'
         data--ajax='true'
-        data-title="{{ __('messages.forcedelete_form_title',['form'=>  __('messages.booking') ]) }}"
+        data-title="{{ __('messages.forcedelete_form_title',['form'=>  __('messages.order') ]) }}"
         data-message='{{ __("messages.forcedelete_msg") }}'
         data-datatable="reload"
         class="mr-2">
