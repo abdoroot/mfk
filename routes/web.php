@@ -423,7 +423,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('user-subscriptions-change-order-status-form/{id}', [UserSubscriptionOrderController::class, 'changeOrderStatusForm'])->name('user-subscriptions.change_order_status_form');
         Route::post('user-subscriptions-change-order-status', [UserSubscriptionOrderController::class, 'changeOrderStatus'])->name('user-subscriptions.change_order_status');
         
-        //todo: handle delete user-subscriptions
+        //todo: handle delete user-subscriptions ///done
         Route::post('user-subscriptions-action', [UserSubscriptionOrderController::class, 'action'])->name('user-subscriptions.action');
         Route::delete('user-subscriptions/{id}', [UserSubscriptionOrderController::class, 'destroy'])->name('user-subscriptions.destroy');
 
